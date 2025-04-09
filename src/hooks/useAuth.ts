@@ -1,10 +1,18 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { login, signup, firebaseLogin, oauthLogin, getUser } from "../api/auth";
+import { useMutation } from "@tanstack/react-query";
+import { login, signup, firebaseLogin, oauthLogin } from "@/services/auth";
 
 export const useLogin = () => {
-  return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      login(email, password),
+  return useMutation<User, Error, { email: string; password: string }>({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      const res = await login(email, password);
+      return res.user;
+    },
   });
 };
 
@@ -33,13 +41,13 @@ export const useOauthLogin = () => {
     mutationFn: oauthLogin,
   });
 };
-export function useUser() {
-  return useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const user = getUser();
-      return user;
-    },
-    staleTime: 1000 * 60 * 50,
-  });
-}
+// export function useUser() {
+//   return useQuery({
+//     queryKey: ["user"],
+//     queryFn: async () => {
+//       const user = getUser();
+//       return user;
+//     },
+//     staleTime: 1000 * 60 * 50,
+//   });
+// }
