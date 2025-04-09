@@ -1,6 +1,7 @@
 // utils/socket.ts
 import { io, Socket } from "socket.io-client";
-
+import { getCurrentUser } from "./getCurrentUser";
+const user = await getCurrentUser();
 let socket: Socket | null = null;
 
 export const getSocket = (roomId: string): Socket => {
@@ -8,13 +9,14 @@ export const getSocket = (roomId: string): Socket => {
 
   if (!socket || !socket.connected) {
     if (socket) {
+      socket.removeAllListeners();
       socket.disconnect(); // Clean up any disconnected socket
     }
 
     socket = io(URL, {
       transports: ["websocket"],
       withCredentials: true,
-      query: { roomId },
+      query: { roomId, userId: user.id, username: user.username },
     });
 
     console.log("🧠 Initializing new socket for room:", roomId);
@@ -38,7 +40,10 @@ export const getSocket = (roomId: string): Socket => {
 };
 
 // Optional: Add a function to wait for connection
-export const waitForSocketConnection = (socket: Socket, timeout = 5000): Promise<void> => {
+export const waitForSocketConnection = (
+  socket: Socket,
+  timeout = 5000
+): Promise<void> => {
   return new Promise((resolve, reject) => {
     if (socket.connected) {
       resolve();

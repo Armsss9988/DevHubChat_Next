@@ -6,6 +6,8 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { getRooms } from "@/services/room";
+import { getServerCurrentUser } from "@/services/getServerCurrentUser";
+import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "Authenticate",
   description: "Join our ChatHub for fun",
@@ -17,7 +19,10 @@ export default async function RoomLayout({
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
-
+  const user = await getServerCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
   await queryClient.prefetchQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
