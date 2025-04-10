@@ -82,17 +82,17 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-green-100">
+    <div className="flex h-[850px] md:h-[650px] mt-10 bg-transparent overflow-hidden scroll-auto">
       <div
-        className={`transition-all duration-300 bg-white border-r md:block h-full z-10 absolute md:static ${
-          showUsers ? "w-4/5 md:w-1/5" : "w-0 md:w-1/5 hidden"
+        className={`transition-all duration-300 bg-[#c5b395] md:block h-full z-10 shadow-[10px_10px_5px_rgba(0,0,0,0.3)] rounded-tr-3xl ${
+          showUsers ? "w-4/5 md:w-1/5" : "w-0 md:w-1/5 hidden overflow-hidden"
         }`}
       >
         <UserList users={onlineUsers || []} />
       </div>
 
-      <div className="flex flex-col flex-1 min-h-0">
-        <div className="flex items-center justify-between p-3 border-b bg-[#165831] shadow-md">
+      <div className="flex flex-col flex-1 h-full rounded-t-2xl overflow-hidden">
+        <div className="flex items-center justify-between p-3 border-b bg-[#165831] shadow-[10px_10px_5px_rgba(0,0,0,0.3)] z-1">
           <button
             className="md:hidden text-green-800"
             onClick={() => setShowUsers(!showUsers)}

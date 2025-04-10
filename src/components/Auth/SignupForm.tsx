@@ -10,21 +10,22 @@ const SignupForm = () => {
   const { mutate: signup, isPending } = useSignup();
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotificationWithIcon = (
-    type: "success" | "info" | "warning" | "error"
-  ) => {
-    api[type]({
-      message: "Signup success",
-      description: "You will come to room",
-    });
-  };
-
   const handleSubmit = (email: string, password: string, name: string) => {
     signup(
       { email, password, name },
       {
         onSuccess: () => {
-          openNotificationWithIcon("success");
+          api["success"]({
+            message: "Đăng ký thành công",
+            description: "Xem danh sách phòng nào",
+          });
+          router.push("/room");
+        },
+        onError: (data) => {
+          api["error"]({
+            message: "Có vấn đề khi Đăng ký",
+            description: data.message,
+          });
           router.push("/room");
         },
       }
@@ -60,7 +61,7 @@ const SignupForm = () => {
           <AntForm
             layout="vertical"
             onFinish={handleSubmit}
-            className="space-y-6 w-[400px]"
+            className="space-y-6 md:w-[400px]"
           >
             <AntForm.Item
               label={<Typography.Text strong>User Name</Typography.Text>}

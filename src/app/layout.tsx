@@ -8,7 +8,8 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { getServerCurrentUser } from "@/services/getServerCurrentUser";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Header from "@/components/LayoutPart/Header";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,15 +34,16 @@ export default async function RootLayout({
   await queryClient.prefetchQuery({
     queryKey: ["currentUser"],
     queryFn: async () => await getServerCurrentUser(),
-  })
+  });
   return (
-    <html lang="en" className="mdl-js">
+    <html lang="en" className="mdl-js h-screen">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}
       >
         <ReactQueryProvider>
           <HydrationBoundary state={dehydrate(queryClient)}>
-            {children}
+            <Header />
+            <div className="flex-1">{children}</div>
           </HydrationBoundary>
           <ReactQueryDevtools initialIsOpen={false} />
         </ReactQueryProvider>

@@ -31,7 +31,7 @@ export default async function RoomLayout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <WebsocketProvider>
-        <div className="">{children}</div>
+        <div className="h-full">{children}</div>
       </WebsocketProvider>
     </HydrationBoundary>
   );

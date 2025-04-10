@@ -12,8 +12,17 @@ export const getRooms = async () => {
   const response = await axiosConfig.get("/rooms");
   return response.data;
 };
+export const filterRooms = async (name?: string, page = 1, pageSize = 10) => {
+  const params = { page, pageSize, name };
+  const response = await axiosConfig.get(`/rooms/filter`, { params });
+  return response.data;
+};
 
-export const updateRoom = async (id: string, name: string, description: string) => {
+export const updateRoom = async (
+  id: string,
+  name: string,
+  description: string
+) => {
   const response = await axiosConfig.put(`/rooms/${id}`, {
     name,
     description,

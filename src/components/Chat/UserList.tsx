@@ -5,7 +5,7 @@ const { Text } = Typography;
 
 const UserList = ({ users }: { users: { username: string; id: string }[] }) => {
   return (
-    <div className="p-4 border-r h-full bg-[#fcf7ed] overflow-y-auto">
+    <div className="p-4 mt-1">
       <div className="text-xs font-bold text-[#7f8c8d] tracking-wide mb-3">
         MEMBERS ({users?.length || "0"})
       </div>

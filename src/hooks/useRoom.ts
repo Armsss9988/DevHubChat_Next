@@ -1,11 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createRoom, getRooms, updateRoom, deleteRoom } from "@/services/room";
+import {
+  createRoom,
+  getRooms,
+  updateRoom,
+  deleteRoom,
+  filterRooms,
+} from "@/services/room";
 import { message } from "antd";
 
 export const useGetRooms = () => {
   return useQuery({
     queryKey: ["rooms"],
     queryFn: () => getRooms(),
+  });
+};
+export const useFilterRooms = (
+  name: string,
+  page: number,
+  pageSize: number
+) => {
+  return useQuery({
+    queryKey: ["filterRooms", name, page, pageSize],
+    queryFn: () => filterRooms(name, page, pageSize),
   });
 };
 

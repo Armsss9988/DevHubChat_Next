@@ -11,7 +11,7 @@ export default async function RoomLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="h-full">
+    <div className="h-full bg-transparent">
       {children}
     </div>
   );

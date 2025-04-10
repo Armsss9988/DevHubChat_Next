@@ -1,8 +1,11 @@
+"use client";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import Link from "next/link";
 
 export default function Home() {
+  const { data: user } = useCurrentUser();
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 bg-[#f5f5f2] text-[#2f2f2f] font-sans">
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center h-full p-8 pb-20 gap-16 sm:p-20  text-[#2f2f2f] font-sans">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         {/* <Image
           src="/devhub-logo.svg"
@@ -17,25 +20,35 @@ export default function Home() {
         </h1>
 
         <p className="max-w-[500px] text-center sm:text-left text-sm text-[#444] leading-relaxed">
-          Nơi kết nối lập trình viên, chia sẻ kiến thức và trò chuyện mọi lúc mọi nơi.
-          Hãy đăng nhập hoặc tạo tài khoản để bắt đầu cuộc trò chuyện cùng cộng đồng.
+          Nơi kết nối lập trình viên, chia sẻ kiến thức và trò chuyện mọi lúc
+          mọi nơi. Hãy đăng nhập hoặc tạo tài khoản để bắt đầu cuộc trò chuyện
+          cùng cộng đồng.
         </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <Link
-            href="/login"
-            className="rounded-full border border-transparent transition-colors flex items-center justify-center bg-[#38a169] hover:bg-[#2f855a] text-white font-semibold text-sm sm:text-base h-10 sm:h-12 px-6 sm:px-8 w-full sm:w-auto"
-          >
-            Đăng nhập
-          </Link>
+        {!user ? (
+          <div className="flex gap-4 items-center flex-col sm:flex-row">
+            <Link
+              href="/login"
+              className="rounded-full border border-transparent transition-colors flex items-center justify-center bg-[#38a169] hover:bg-[#2f855a] text-white font-semibold text-sm sm:text-base h-10 sm:h-12 px-6 sm:px-8 w-full sm:w-auto"
+            >
+              Đăng nhập
+            </Link>
 
+            <Link
+              href="/signup"
+              className="rounded-full border border-[#6b4f3b] text-[#6b4f3b] hover:bg-[#eee4d8] transition-colors flex items-center justify-center font-semibold text-sm sm:text-base h-10 sm:h-12 px-6 sm:px-8 w-full sm:w-auto"
+            >
+              Đăng ký
+            </Link>
+          </div>
+        ) : (
           <Link
-            href="/signup"
+            href="/room"
             className="rounded-full border border-[#6b4f3b] text-[#6b4f3b] hover:bg-[#eee4d8] transition-colors flex items-center justify-center font-semibold text-sm sm:text-base h-10 sm:h-12 px-6 sm:px-8 w-full sm:w-auto"
           >
-            Đăng ký
+            Join Chat
           </Link>
-        </div>
+        )}
       </main>
 
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center text-sm text-[#6b4f3b]">

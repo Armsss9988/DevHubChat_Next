@@ -9,22 +9,22 @@ const LoginForm = () => {
   const { mutate: loginMutate, isPending } = useLogin();
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotificationWithIcon = (
-    type: "success" | "info" | "warning" | "error"
-  ) => {
-    api[type]({
-      message: "Login success",
-      description: "You will come to room",
-    });
-  };
-
   const handleSubmit = (email: string, password: string) => {
     loginMutate(
       { email, password },
       {
-        onSuccess: (data) => {
-          console.log(JSON.stringify(data));
-          openNotificationWithIcon("success");
+        onSuccess: () => {
+          api["success"]({
+            message: "Đăng nhập thành công",
+            description: "Xem danh sách phòng nào",
+          });
+          router.push("/room");
+        },
+        onError: (data) => {
+          api["error"]({
+            message: "Có vấn đề khi đăng nhập",
+            description: data.message,
+          });
           router.push("/room");
         },
       }
