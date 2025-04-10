@@ -28,22 +28,24 @@ const RoomModal: React.FC<RoomModalProps> = ({
   return (
     <Modal
       open={open}
-      title="Create New Room"
+      title={<span className="text-[#395144]">Create New Room</span>}
       onCancel={onCancel}
-      onOk={handleCreate}
       footer={null}
-      loading={loading}
       centered
+      className="custom-modal"
     >
       <Form layout="vertical" className="space-y-2">
-        <Form.Item label="Room Name" required>
+        <Form.Item
+          label={<span className="text-[#4E6C50]">Room Name</span>}
+          required
+        >
           <Input
             placeholder="Enter room name"
             value={name}
             onChange={(e) => setRoomName(e.target.value)}
           />
         </Form.Item>
-        <Form.Item label="Description">
+        <Form.Item label={<span className="text-[#4E6C50]">Description</span>}>
           <Input.TextArea
             placeholder="Enter room description"
             value={description}
@@ -53,7 +55,12 @@ const RoomModal: React.FC<RoomModalProps> = ({
         </Form.Item>
         <div className="flex justify-end space-x-2">
           <Button onClick={onCancel}>Cancel</Button>
-          <Button type="primary" onClick={handleCreate} loading={loading}>
+          <Button
+            type="primary"
+            onClick={handleCreate}
+            loading={loading}
+            className="bg-[#395144] hover:bg-[#4E6C50] border-none text-white"
+          >
             Create Room
           </Button>
         </div>

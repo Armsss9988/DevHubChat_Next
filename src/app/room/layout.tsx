@@ -8,6 +8,7 @@ import {
 import { getRooms } from "@/services/room";
 import { getServerCurrentUser } from "@/services/getServerCurrentUser";
 import { redirect } from "next/navigation";
+import { WebsocketProvider } from "@/providers/WebsocketProvider";
 export const metadata: Metadata = {
   title: "Authenticate",
   description: "Join our ChatHub for fun",
@@ -29,7 +30,9 @@ export default async function RoomLayout({
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="">{children}</div>
+      <WebsocketProvider>
+        <div className="">{children}</div>
+      </WebsocketProvider>
     </HydrationBoundary>
   );
 }

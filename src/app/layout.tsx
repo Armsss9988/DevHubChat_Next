@@ -8,6 +8,7 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { getServerCurrentUser } from "@/services/getServerCurrentUser";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,7 +33,7 @@ export default async function RootLayout({
   await queryClient.prefetchQuery({
     queryKey: ["currentUser"],
     queryFn: async () => await getServerCurrentUser(),
-  });
+  })
   return (
     <html lang="en" className="mdl-js">
       <body
@@ -42,6 +43,7 @@ export default async function RootLayout({
           <HydrationBoundary state={dehydrate(queryClient)}>
             {children}
           </HydrationBoundary>
+          <ReactQueryDevtools initialIsOpen={false} />
         </ReactQueryProvider>
       </body>
     </html>

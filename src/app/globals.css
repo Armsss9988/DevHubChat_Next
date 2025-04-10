@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --color-primary: #395144;
+  --color-secondary: #4E6C50;
+  --color-accent: #AA8B56;
+  --color-background: #F0EBCE;
+  --color-foreground: #1A1A1A;
+  --font-sans: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', monospace;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Base styling */
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1A1A1A;
+    --foreground: var(--color-background);
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  transition: background 0.3s, color 0.3s;
+}
+
+a {
+  color: var(--color-primary);
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--color-accent);
+}
+
+button {
+  font-family: inherit;
+}
+
+.ant-btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.ant-btn-primary:hover {
+  background-color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
 }
