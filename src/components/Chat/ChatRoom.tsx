@@ -1,7 +1,7 @@
 "use client";
 
 import { useChatSocket } from "@/hooks/useChatSocket";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import UserList from "./UserList";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";

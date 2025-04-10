@@ -16,7 +16,7 @@ export async function GET() {
     });
 
     return new Response(JSON.stringify(res.data));
-  } catch (err) {
+  } catch {
     return new Response(JSON.stringify({ message: "Invalid token" }), {
       status: 401,
     });

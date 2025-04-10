@@ -1,4 +1,3 @@
-// app/api/login/route.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import axiosConfig from "@/configs/axiosConfig";
@@ -15,15 +14,13 @@ export async function POST(req: NextRequest) {
     });
     response.cookies.set("access_token", token);
     return response;
-  } catch (err: unknown) {
-    console.error("Error during login process: ", err?.response?.data || err);
-
+  } catch {
     return NextResponse.json(
       {
         message: "Login failed",
-        error: err?.response?.data?.message || "Something went wrong",
+        error: "Something went wrong",
       },
-      { status: err?.response?.status || 500 }
+      { status: 500 }
     );
   }
 }
