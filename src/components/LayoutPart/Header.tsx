@@ -49,7 +49,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-[#4E6C50] text-white px-6 py-4 flex items-center justify-between shadow-amber-900 shadow-2xl rounded-b-sm z-10 h-16 relative">
+    <div className="bg-[#4E6C50] text-white px-6 py-4 flex items-center justify-between shadow-amber-900 shadow-2xl rounded-b-sm z-10 h-16 relative">
       {/* Logo */}
       <Link
         href="/"
@@ -148,7 +148,7 @@ const Header = () => {
           )}
         </div>
       )}
-    </header>
+    </div>
   );
 };
 

@@ -36,20 +36,18 @@ export default async function RootLayout({
     queryFn: async () => await getServerCurrentUser(),
   });
   return (
-    <html lang="en" className="h-full">
-      <ReactQueryProvider>
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <Header />
+    <ReactQueryProvider>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <html lang="en">
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex flex-col`}
+            className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex-1 flex flex-col overflow-hidden`}
           >
-            <div className="flex-1 flex flex-col h-full overflow-hidden">
-              {children}
-            </div>
+            <Header />
+            {children}
           </body>
-        </HydrationBoundary>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </ReactQueryProvider>
-    </html>
+        </html>
+      </HydrationBoundary>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </ReactQueryProvider>
   );
 }
