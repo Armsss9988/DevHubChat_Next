@@ -17,7 +17,7 @@ export default async function AuthLayout({
     redirect("/room");
   }
   return (
-    <div className="bg-gray-100 p-10 flex justify-center items-center min-h-screen">
+    <div className="bg-gray-100 flex justify-center items-center h-full">
       {children}
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useChatSocket } from "@/hooks/useChatSocket";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import UserList from "./UserList";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
@@ -43,9 +43,9 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
       loadMoreMessages(undefined);
       didLoadRef.current = true;
     }
-  }, [messages]);
+  }, [messages, loadMoreMessages]);
 
-  const handleScroll = async () => {
+  const handleScroll = useCallback(async () => {
     const container = chatContainerRef.current;
     if (!container || !hasMore) return;
 
@@ -60,7 +60,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
         container.scrollTop = newScrollHeight - prevScrollHeight;
       }, 0);
     }
-  };
+  }, [hasMore, messages, loadMoreMessages]);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -68,7 +68,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
       chatContainer.addEventListener("scroll", handleScroll);
       return () => chatContainer.removeEventListener("scroll", handleScroll);
     }
-  }, [messages, hasMore]);
+  }, [handleScroll]);
 
   const handleSendMessage = (content: string) => {
     sendMessage({
@@ -82,19 +82,19 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   };
 
   return (
-    <div className="flex h-[850px] md:h-[650px] mt-10 bg-transparent overflow-hidden scroll-auto">
+    <div className="flex flex-1 h-full pt-10 bg-transparent overflow-hidden">
       <div
         className={`transition-all duration-300 bg-[#c5b395] md:block h-full z-10 shadow-[10px_10px_5px_rgba(0,0,0,0.3)] rounded-tr-3xl ${
-          showUsers ? "w-4/5 md:w-1/5" : "w-0 md:w-1/5 hidden overflow-hidden"
+          showUsers ? "w-3/5 md:w-1/5" : "w-0 md:w-1/5 hidden overflow-hidden"
         }`}
       >
         <UserList users={onlineUsers || []} />
       </div>
 
-      <div className="flex flex-col flex-1 h-full rounded-t-2xl overflow-hidden">
-        <div className="flex items-center justify-between p-3 border-b bg-[#165831] shadow-[10px_10px_5px_rgba(0,0,0,0.3)] z-1">
+      <div className="flex flex-col h-full flex-1 rounded-t-2xl overflow-hidden">
+        <div className="flex items-center justify-between p-3 border-b bg-[#165831] shadow-[10px_10px_5px_rgba(0,0,0,0.3)] z-1 gap-3">
           <button
-            className="md:hidden text-green-800"
+            className="md:hidden text-[#c5ecd2] text-3xl"
             onClick={() => setShowUsers(!showUsers)}
           >
             {showUsers ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
@@ -114,8 +114,9 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
             />
           ))}
         </div>
-
-        <ChatInput onSend={handleSendMessage} />
+        <div className="h-12">
+          <ChatInput onSend={handleSendMessage} />
+        </div>
       </div>
     </div>
   );

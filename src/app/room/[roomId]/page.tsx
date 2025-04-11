@@ -6,7 +6,7 @@ export default function ChatPage() {
   const param = useParams();
   const { roomId } = param;
   return (
-    <div className="min-w-screen h-full bg-transparent">
+    <div className="min-w-full h-full bg-transparent overflow-hidden">
       <ChatRoom roomId={(roomId as string) || "1"} />
     </div>
   );

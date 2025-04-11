@@ -2,12 +2,12 @@
 
 :root {
   --color-primary: #395144;
-  --color-secondary: #4E6C50;
-  --color-accent: #AA8B56;
-  --color-background: #F0EBCE;
-  --color-foreground: #1A1A1A;
-  --font-sans: 'Inter', 'Segoe UI', sans-serif;
-  --font-mono: 'Fira Code', monospace;
+  --color-secondary: #4e6c50;
+  --color-accent: #aa8b56;
+  --color-background: #f0ebce;
+  --color-foreground: #1a1a1a;
+  --font-sans: "Inter", "Segoe UI", sans-serif;
+  --font-mono: "Fira Code", monospace;
 
   /* Base styling */
   --background: var(--color-background);
@@ -16,7 +16,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1A1A1A;
+    --background: #1a1a1a;
     --foreground: var(--color-background);
   }
 }
@@ -26,6 +26,13 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   transition: background 0.3s, color 0.3s;
+}
+html,
+body {
+  height: 100%; /* Đảm bảo html và body chiếm toàn bộ chiều cao */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 a {
@@ -47,4 +54,23 @@ button {
 .ant-btn-primary:hover {
   background-color: var(--color-secondary) !important;
   border-color: var(--color-secondary) !important;
+}
+.scrollbar-green::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-green::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.scrollbar-green::-webkit-scrollbar-thumb {
+  background-color: #165831; /* Xanh lá đậm */
+  border-radius: 8px;
+  border: 2px solid #ffffff00; /* Optional transparent border */
+}
+
+.scrollbar-green::-webkit-scrollbar-thumb:hover {
+  background-color: #0f3e24;
 }

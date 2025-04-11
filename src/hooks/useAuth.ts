@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login, signup, firebaseLogin, oauthLogin } from "@/services/auth";
 
 export const useLogin = () => {
@@ -40,6 +40,20 @@ export const useOauthLogin = () => {
   return useMutation({
     mutationFn: oauthLogin,
   });
+};
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+
+  const logout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+      queryClient.setQueryData(["currentUser"], null);
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+  return logout;
 };
 // export function useUser() {
 //   return useQuery({

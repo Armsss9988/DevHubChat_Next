@@ -10,8 +10,8 @@ import { getServerCurrentUser } from "@/services/getServerCurrentUser";
 import { redirect } from "next/navigation";
 import { WebsocketProvider } from "@/providers/WebsocketProvider";
 export const metadata: Metadata = {
-  title: "Authenticate",
-  description: "Join our ChatHub for fun",
+  title: "Chat Room",
+  description: "Find people to chat, chill, and build cool stuff with.",
 };
 
 export default async function RoomLayout({
@@ -31,7 +31,7 @@ export default async function RoomLayout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <WebsocketProvider>
-        <div className="h-full">{children}</div>
+        <div className="h-full overflow-hidden">{children}</div>
       </WebsocketProvider>
     </HydrationBoundary>
   );

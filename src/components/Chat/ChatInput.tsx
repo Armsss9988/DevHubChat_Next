@@ -24,7 +24,7 @@ const ChatInput = ({ onSend }: { onSend: (content: string) => void }) => {
   };
 
   return (
-    <div className="border-t px-4 py-2 bg-white dark:bg-neutral-900 flex items-end">
+    <div className="border-t h-12 px-4 py-2 bg-white dark:bg-neutral-900 flex items-end">
       <Input.TextArea
         ref={textAreaRef}
         autoSize={{ minRows: 1, maxRows: 4 }}

@@ -57,7 +57,7 @@ const LoginForm = () => {
           <AntForm
             layout="vertical"
             onFinish={handleSubmit}
-            className="space-y-6 w-[400px]"
+            className="space-y-6 w-[300px] md:w-[400px]"
           >
             <AntForm.Item
               label={<Typography.Text strong>Email</Typography.Text>}
