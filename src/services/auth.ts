@@ -1,13 +1,16 @@
 import axiosConfig from "@/configs/axiosConfig";
 export const login = async (email: string, password: string) => {
   try {
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_FE_URL}/api/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || "Login failed");
@@ -21,13 +24,16 @@ export const login = async (email: string, password: string) => {
 
 export const signup = async (email: string, password: string, name: string) => {
   try {
-    const response = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password, name }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_FE_URL}/api/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, name }),
+      }
+    );
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || "Register failed");

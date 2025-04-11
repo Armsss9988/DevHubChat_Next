@@ -46,7 +46,7 @@ export const useLogout = () => {
 
   const logout = async () => {
     try {
-      await fetch("/api/logout", { method: "POST" });
+      await fetch(`${process.env.NEXT_PUBLIC_FE_URL}/api/logout`, { method: "POST" });
       queryClient.setQueryData(["currentUser"], null);
     } catch (err) {
       console.error("Logout failed", err);
