@@ -1,5 +1,5 @@
 export async function getCurrentUser() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_FE_URL}api/me`, {
+  const res = await fetch(`/api/me`, {
     method: "GET",
     credentials: "include",
   });
