@@ -5,6 +5,7 @@ import {
   updateRoom,
   deleteRoom,
   filterRooms,
+  getRoomById,
 } from "@/services/room";
 import { message } from "antd";
 
@@ -22,6 +23,13 @@ export const useFilterRooms = (
   return useQuery({
     queryKey: ["filterRooms", name, page, pageSize],
     queryFn: () => filterRooms(name, page, pageSize),
+  });
+};
+export const useGetRoomById = (roomId: string) => {
+  return useQuery({
+    queryKey: ["room", roomId],
+    queryFn: () => getRoomById(roomId),
+    enabled: !!roomId, // Chỉ chạy query nếu roomId tồn tại
   });
 };
 

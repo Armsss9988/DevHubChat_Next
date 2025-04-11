@@ -17,6 +17,10 @@ export const filterRooms = async (name?: string, page = 1, pageSize = 10) => {
   const response = await axiosConfig.get(`/rooms/filter`, { params });
   return response.data;
 };
+export const getRoomById = async (roomId: string): Promise<Room> => {
+  const response = await axiosConfig.get(`/rooms/room/${roomId}`);
+  return response.data;
+};
 
 export const updateRoom = async (
   id: string,

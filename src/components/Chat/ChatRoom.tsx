@@ -8,16 +8,12 @@ import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { useGetRoomById } from "@/hooks/useRoom";
 
 const ChatRoom = ({ roomId }: { roomId: string }) => {
-  const {
-    messages,
-    userCount,
-    sendMessage,
-    loadMoreMessages,
-    hasMore,
-    onlineUsers,
-  } = useChatSocket(roomId);
+  const { messages, sendMessage, loadMoreMessages, hasMore, onlineUsers } =
+    useChatSocket(roomId);
+  const { data: room } = useGetRoomById(roomId);
   const { data: you } = useCurrentUser();
   const didLoadRef = useRef(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -99,7 +95,10 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
           >
             {showUsers ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
           </button>
-          <ChatHeader roomName="General Discussion" membersCount={userCount} />
+          <ChatHeader
+            roomName={room?.name || ""}
+            description={room?.description || ""}
+          />
         </div>
 
         <div
