@@ -48,13 +48,4 @@ export const oauthLogin = async () => {
   const response = await axiosConfig.get("/oauth-login");
   return response.data;
 };
-// export const getUser = async () => {
-//   const token = (await cookies()).get("token")?.value;
-//   if (!token) return null;
 
-//   try {
-//     return jwt.verify(token, process.env.JWT_SECRET || "my-secret");
-//   } catch {
-//     return null;
-//   }
-// };

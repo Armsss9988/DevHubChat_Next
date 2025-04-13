@@ -1,15 +1,11 @@
 // app/api/logout/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST() {
-  const res = NextResponse.json({ message: "Logged out successfully" });
+  const response = NextResponse.json({ message: "Logged out" });
 
-  // Xóa cookie bằng cách set lại với maxAge = 0
-  res.cookies.set("access_token", "", {
-    httpOnly: true,
-    maxAge: 0,
-    path: "/",
-  });
+  response.cookies.set("access_token", "", { maxAge: 0 });
+  response.cookies.set("refresh_token", "", { maxAge: 0 });
 
-  return res;
+  return response;
 }

@@ -1,10 +1,6 @@
+import axiosInstance from "@/configs/axiosConfig";
+
 export async function getCurrentUser() {
-  const res = await fetch(`/api/me`, {
-    method: "GET",
-    credentials: "include",
-  });
-
-  if (!res.ok) return null;
-
-  return res.json();
+  const res = await axiosInstance.get("/auth/me",{ withCredentials: true,});
+  return res.data;
 }

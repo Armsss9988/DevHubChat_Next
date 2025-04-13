@@ -11,8 +11,13 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { useGetRoomById } from "@/hooks/useRoom";
 
 const ChatRoom = ({ roomId }: { roomId: string }) => {
-  const { messages, sendMessage, loadMoreMessages, hasMore, onlineUsers } =
-    useChatSocket(roomId);
+  const {
+    messages,
+    sendMessage,
+    loadMoreMessages,
+    hasMore,
+    onlineUsers,
+  } = useChatSocket(roomId);
   const { data: room } = useGetRoomById(roomId);
   const { data: you } = useCurrentUser();
   const didLoadRef = useRef(false);

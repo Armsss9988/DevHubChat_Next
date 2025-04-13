@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { notification, Form as AntForm, Input, Typography, Button } from "antd";
@@ -7,6 +7,7 @@ import { useLogin } from "@/hooks/useAuth";
 const LoginForm = () => {
   const router = useRouter();
   const { mutate: loginMutate, isPending } = useLogin();
+  const searchParams = useSearchParams();
   const [api, contextHolder] = notification.useNotification();
 
   const handleSubmit = (email: string, password: string) => {
@@ -18,6 +19,12 @@ const LoginForm = () => {
             message: "Đăng nhập thành công",
             description: "Xem danh sách phòng nào",
           });
+          const callbackUrl = searchParams.get("callbackUrl");
+          console.log("callbackUrl", callbackUrl);
+          if (callbackUrl) {
+            router.push(callbackUrl);
+          }
+
           router.push("/room");
         },
         onError: (data) => {

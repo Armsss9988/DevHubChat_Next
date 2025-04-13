@@ -1,7 +1,7 @@
-import axiosConfig from "@/configs/axiosConfig";
+import axiosInstance from "@/configs/axiosConfig";
 
 export const createRoom = async (name: string, description: string) => {
-  const response = await axiosConfig.post("/rooms", {
+  const response = await axiosInstance.post("/rooms", {
     name,
     description,
   });
@@ -9,16 +9,16 @@ export const createRoom = async (name: string, description: string) => {
 };
 
 export const getRooms = async () => {
-  const response = await axiosConfig.get("/rooms");
+  const response = await axiosInstance.get("/rooms");
   return response.data;
 };
 export const filterRooms = async (name?: string, page = 1, pageSize = 10) => {
   const params = { page, pageSize, name };
-  const response = await axiosConfig.get(`/rooms/filter`, { params });
+  const response = await axiosInstance.get(`/rooms/filter`, { params });
   return response.data;
 };
 export const getRoomById = async (roomId: string): Promise<Room> => {
-  const response = await axiosConfig.get(`/rooms/room/${roomId}`);
+  const response = await axiosInstance.get(`/rooms/room/${roomId}`);
   return response.data;
 };
 
@@ -27,7 +27,7 @@ export const updateRoom = async (
   name: string,
   description: string
 ) => {
-  const response = await axiosConfig.put(`/rooms/${id}`, {
+  const response = await axiosInstance.put(`/rooms/${id}`, {
     name,
     description,
   });
@@ -35,6 +35,6 @@ export const updateRoom = async (
 };
 
 export const deleteRoom = async (id: string) => {
-  const response = await axiosConfig.delete(`/rooms/${id}`);
+  const response = await axiosInstance.delete(`/rooms/${id}`);
   return response.data;
 };

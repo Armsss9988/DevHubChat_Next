@@ -11,12 +11,25 @@ export async function POST(req: NextRequest) {
       name,
     });
 
-    const token = res.data.accessToken;
     const response = NextResponse.json({
       message: "Register success",
       user: res.data.user,
     });
-    response.cookies.set("access_token", token);
+    response.cookies.set("access_token", res.data.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 15,
+    });
+
+    response.cookies.set("refresh_token", res.data.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
     return response;
   } catch {
     return NextResponse.json(
