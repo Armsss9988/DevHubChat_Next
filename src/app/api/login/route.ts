@@ -13,15 +13,14 @@ export async function POST(req: NextRequest) {
     response.cookies.set("access_token", res.data.accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
-      path: "/",
+      sameSite: "none",
       maxAge: 60 * 15,
     });
 
     response.cookies.set("refresh_token", res.data.refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "none",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, 
     });

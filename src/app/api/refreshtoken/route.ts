@@ -22,7 +22,7 @@ export async function POST() {
   response.cookies.set("access_token", data.accessToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
+    sameSite: "none",
     path: "/",
     maxAge: 60 * 15,
   });
