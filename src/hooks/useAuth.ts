@@ -1,5 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { login, signup, firebaseLogin, oauthLogin } from "@/services/auth";
+import { useMutation } from "@tanstack/react-query";
+import {
+  login,
+  signup,
+  firebaseLogin,
+  oauthLogin,
+  logout,
+} from "@/services/auth";
 
 export const useLogin = () => {
   return useMutation<User, Error, { email: string; password: string }>({
@@ -11,6 +17,15 @@ export const useLogin = () => {
       password: string;
     }) => {
       const res = await login(email, password);
+      return res.user;
+    },
+  });
+};
+
+export const useLogout = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const res = await logout();
       return res.user;
     },
   });
@@ -41,20 +56,22 @@ export const useOauthLogin = () => {
     mutationFn: oauthLogin,
   });
 };
-export const useLogout = () => {
-  const queryClient = useQueryClient();
+// export const useLogout = () => {
+//   const queryClient = useQueryClient();
 
-  const logout = async () => {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_FE_URL}/api/logout`, { method: "POST" });
-      queryClient.setQueryData(["currentUser"], null);
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
+//   const logout = async () => {
+//     try {
+//       await fetch(`${process.env.NEXT_PUBLIC_FE_URL}/api/logout`, {
+//         method: "POST",
+//       });
+//       queryClient.setQueryData(["currentUser"], null);
+//     } catch (err) {
+//       console.error("Logout failed", err);
+//     }
+//   };
 
-  return logout;
-};
+//   return logout;
+// };
 // export function useUser() {
 //   return useQuery({
 //     queryKey: ["user"],

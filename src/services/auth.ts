@@ -21,20 +21,18 @@ export const login = async (email: string, password: string) => {
   }
 };
 
+export const logout = async () => {
+  try {
+    const res = await axiosConfig.post("/auth/logout");
+    return res.data;
+  } catch (error) {
+    console.error("Error during logout:", error);
+    throw error;
+  }
+};
+
 export const signup = async (email: string, password: string, name: string) => {
   try {
-    // const response = await fetch("/api/register", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ email, password, name }),
-    // });
-    // if (!response.ok) {
-    //   const error = await response.json();
-    //   throw new Error(error.message || "Register failed");
-    // }
-    // return await response.json();
     const res = await axiosConfig.post("/auth/register", {
       email,
       password,
