@@ -33,6 +33,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow-x: hidden; 
 }
 
 a {
@@ -66,7 +67,7 @@ button {
 }
 
 .scrollbar-green::-webkit-scrollbar-thumb {
-  background-color: #165831; /* Xanh lá đậm */
+  background-color: #a1a1a1; /* Xanh lá đậm */
   border-radius: 8px;
   border: 2px solid #ffffff00; /* Optional transparent border */
 }

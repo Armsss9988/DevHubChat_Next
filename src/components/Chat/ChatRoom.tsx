@@ -11,27 +11,25 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { useGetRoomById } from "@/hooks/useRoom";
 
 const ChatRoom = ({ roomId }: { roomId: string }) => {
-  const {
-    messages,
-    sendMessage,
-    loadMoreMessages,
-    hasMore,
-    onlineUsers,
-  } = useChatSocket(roomId);
+  const { messages, sendMessage, loadMoreMessages, hasMore, onlineUsers } =
+    useChatSocket(roomId);
   const { data: room } = useGetRoomById(roomId);
   const { data: you } = useCurrentUser();
   const didLoadRef = useRef(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
   const [showUsers, setShowUsers] = useState(false);
-
+  const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
-    const container = chatContainerRef.current;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-    }
+    requestAnimationFrame(() => {
+      scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
   };
-
+  useEffect(() => {
+    if (!firstRender.current) {
+      scrollToBottom();
+    }
+  }, [messages]);
   useEffect(() => {
     if (messages.length > 0 && firstRender.current) {
       scrollToBottom();
@@ -77,9 +75,6 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
       userId: you?.id || "haha",
       roomId,
     });
-    setTimeout(() => {
-      scrollToBottom();
-    }, 50);
   };
 
   return (
@@ -117,6 +112,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
               isMe={msg.user?.id === you?.id}
             />
           ))}
+          <div ref={scrollAnchorRef} /> {/* 🔻 Đây là anchor ở cuối */}
         </div>
         <div className="h-12">
           <ChatInput onSend={handleSendMessage} />

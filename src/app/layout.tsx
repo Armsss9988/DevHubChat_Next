@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "../providers/ReactQueryProviders";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Header from "@/components/LayoutPart/Header";
+import { Suspense } from "react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,16 +25,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ReactQueryProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex-1 flex flex-col overflow-hidden`}
-        >
-          <Header />
-          {children}
-        </body>
-      </html>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </ReactQueryProvider>
+    <Suspense  fallback={<div>Loading...</div>}>
+      <ReactQueryProvider>
+        <html lang="en">
+          <head>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes"
+            />
+          </head>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex-1 flex flex-col overflow-hidden`}
+          >
+            <Header />
+            {children}
+          </body>
+        </html>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ReactQueryProvider>
+    </Suspense>
   );
 }
