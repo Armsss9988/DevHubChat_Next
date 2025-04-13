@@ -28,6 +28,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: ["/room", "/login", "/register"],
+  // matcher: ["/haha"],
 };
 
 // import { NextRequest, NextResponse } from "next/server";

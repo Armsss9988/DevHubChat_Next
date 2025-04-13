@@ -15,7 +15,6 @@ axiosInstance.interceptors.response.use(
       try {
         const refresh = await axiosInstance.post(
           "/auth/refresh",
-          {},
           { withCredentials: true }
         );
         if (refresh.status === 200 || refresh.status === 201) {
