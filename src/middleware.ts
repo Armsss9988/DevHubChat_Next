@@ -1,24 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "./services/getCurrentUser";
 
-export function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get("access_token")?.value;
+export async function middleware(request: NextRequest) {
+  // const accessToken = request.cookies.get("access_token")?.value;
   const url = request.nextUrl.clone();
   const currentPath = request.nextUrl.pathname;
-
+  const user = await getCurrentUser();
   const isGuestOnly = ["/login", "/register"].some((path) =>
     currentPath.startsWith(path)
   );
   const isProtected = ["/room"].some((path) => currentPath.startsWith(path));
 
   // Không có access token → chặn vào trang cần login
-  if (!accessToken && isProtected) {
+  if (!user && isProtected) {
     url.pathname = "/login";
     url.searchParams.set("callbackUrl", currentPath);
     return NextResponse.redirect(url);
   }
 
   // Có access token mà vào login/register → redirect về room
-  if (accessToken && isGuestOnly) {
+  if (user && isGuestOnly) {
     url.pathname = "/room";
     return NextResponse.redirect(url);
   }
