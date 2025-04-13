@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "./services/getCurrentUser";
+import { getCurrentUser } from "../services/getCurrentUser";
 
 export async function middleware(request: NextRequest) {
   // const accessToken = request.cookies.get("access_token")?.value;
