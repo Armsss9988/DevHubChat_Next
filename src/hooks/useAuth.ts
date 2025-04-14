@@ -6,8 +6,10 @@ import {
   oauthLogin,
   logout,
 } from "@/services/auth";
-
+import { useAppDispatch } from "@/store/hook";
+import { login as loginRedux, logout as logoutRedux } from "@/store/authSlice";
 export const useLogin = () => {
+  const dispatch = useAppDispatch();
   return useMutation<User, Error, { email: string; password: string }>({
     mutationFn: async ({
       email,
@@ -17,16 +19,24 @@ export const useLogin = () => {
       password: string;
     }) => {
       const res = await login(email, password);
-      return res.user;
+      return res.data.user;
+    },
+    onSuccess: (data) => {
+      console.log("user from login:", data);
+      dispatch(loginRedux({ user: data }));
     },
   });
 };
 
 export const useLogout = () => {
+  const dispatch = useAppDispatch();
   return useMutation({
     mutationFn: async () => {
       const res = await logout();
       return res.user;
+    },
+    onSuccess: () => {
+      dispatch(logoutRedux());
     },
   });
 };
@@ -72,9 +82,9 @@ export const useOauthLogin = () => {
 
 //   return logout;
 // };
-// export function useUser() {
+// export function useGetUser() {
 //   return useQuery({
-//     queryKey: ["user"],
+//     queryKey: ["currentUser"],
 //     queryFn: async () => {
 //       const user = getUser();
 //       return user;

@@ -10,13 +10,13 @@ import {
   MenuOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useState } from "react";
 import { useLogout } from "@/hooks/useAuth";
-import { Skeleton } from "antd";
+import { RootState } from "@/store";
+import { useAppSelector } from "@/store/hook";
 const Header = () => {
   const router = useRouter();
-  const { data: user, isLoading } = useCurrentUser();
+  const user = useAppSelector((state: RootState) => state?.auth?.user);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
@@ -53,7 +53,6 @@ const Header = () => {
     router.push("/signup");
     setLoadingSignup(false);
   };
-  if (isLoading) return <Skeleton active />;
 
   return (
     <div className="bg-[#4E6C50] text-white px-6 py-4 flex items-center justify-between shadow-amber-900 shadow-2xl rounded-b-sm z-10 h-16 relative">

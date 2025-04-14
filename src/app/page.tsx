@@ -1,9 +1,10 @@
 "use client";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { RootState } from "@/store";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 export default function Home() {
-  const { data: user } = useCurrentUser();
+  const user = useSelector((state: RootState) => state?.auth?.user);
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center h-full p-8 pb-20 gap-16 sm:p-20  text-[#2f2f2f] font-sans">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">

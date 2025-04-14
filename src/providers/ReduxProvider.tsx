@@ -4,28 +4,29 @@ import { Provider } from "react-redux";
 import { store } from "@/store";
 import { login } from "@/store/authSlice";
 import { useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { Skeleton } from "antd";
 
 interface ReduxProviderProps {
   children: React.ReactNode;
-  accessToken: string | null;
 }
 
-export default function ReduxProvider({
-  children,
-  accessToken,
-}: ReduxProviderProps) {
+export default function ReduxProvider({ children }: ReduxProviderProps) {
+  const { data: user, isPending } = useCurrentUser();
   useEffect(() => {
-    if (accessToken) {
-      try {
-        const decoded = jwtDecode(accessToken) as User;
-        store.dispatch(login({ user: decoded }));
-        console.log("DEcodeed", JSON.stringify(decoded));
-      } catch (err) {
-        console.error("❌ Invalid token", err);
+    const getUser = async () => {
+      if (user) {
+        try {
+          console.log("User get hereee:", user);
+          store.dispatch(login({ user: user }));
+          console.log("DEcodeed", JSON.stringify(user));
+        } catch (err) {
+          console.error("❌ Invalid token", err);
+        }
       }
-    }
-  }, [accessToken]);
-
-  return <Provider store={store}>{children}</Provider>;
+    };
+    getUser();
+  }, [user]);
+  if (isPending) return <Skeleton active />;
+   return <Provider store={store}>{children}</Provider>;
 }

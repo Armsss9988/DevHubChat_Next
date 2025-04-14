@@ -77,7 +77,7 @@ export const config = {
 //         const response = NextResponse.next();
 //         response.cookies.set("access_token", data.accessToken, {
 //           httpOnly: true,
-//           secure: true,
+//           secure: process.env.NODE_ENV === "production",
 //           path: "/",
 //           maxAge: 60 * 15,
 //           sameSite: "lax",
