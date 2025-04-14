@@ -7,9 +7,8 @@ import {
   logout,
 } from "@/services/auth";
 import { useAppDispatch } from "@/store/hook";
-import { login as loginRedux, logout as logoutRedux } from "@/store/authSlice";
+import { logout as logoutRedux } from "@/store/authSlice";
 export const useLogin = () => {
-  const dispatch = useAppDispatch();
   return useMutation<User, Error, { email: string; password: string }>({
     mutationFn: async ({
       email,
@@ -19,11 +18,10 @@ export const useLogin = () => {
       password: string;
     }) => {
       const res = await login(email, password);
-      return res.data.user;
+      return res.data;
     },
     onSuccess: (data) => {
       console.log("user from login:", data);
-      dispatch(loginRedux({ user: data }));
     },
   });
 };

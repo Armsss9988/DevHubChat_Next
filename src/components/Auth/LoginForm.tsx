@@ -4,8 +4,11 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { notification, Form as AntForm, Input, Typography, Button } from "antd";
 import { useLogin } from "@/hooks/useAuth";
+import { useAppDispatch } from "@/store/hook";
+import { login } from "@/store/authSlice";
 const LoginForm = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { mutate: loginMutate, isPending } = useLogin();
   const searchParams = useSearchParams();
   const [api, contextHolder] = notification.useNotification();
@@ -14,11 +17,13 @@ const LoginForm = () => {
     loginMutate(
       { email, password },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           api["success"]({
             message: "Đăng nhập thành công",
             description: "Xem danh sách phòng nào",
           });
+
+          dispatch(login({ user: data }));
           const callbackUrl = searchParams.get("callbackUrl");
           console.log("callbackUrl", callbackUrl);
           if (callbackUrl) {
@@ -27,12 +32,11 @@ const LoginForm = () => {
 
           router.push("/room");
         },
-        onError: (data) => {
+        onError: (err: Error) => {
           api["error"]({
             message: "Có vấn đề khi đăng nhập",
-            description: data.message,
+            description: err.message + JSON.stringify(err),
           });
-          router.push("/room");
         },
       }
     );
