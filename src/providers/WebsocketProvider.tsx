@@ -1,22 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 import { connectSocket, disconnectSocket } from "@/services/socket";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useAppSelector } from "@/redux/hook";
 
 export const WebsocketProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const { data: user } = useCurrentUser();
+  const user = useAppSelector((state) => state.auth.user);
   const [isConnected, setIsConnected] = useState(false);
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
-    setIsClient(true); // ✅ Đánh dấu đã client-side render
+    setIsClient(true);
   }, []);
   useEffect(() => {
     const init = async () => {
-      if (user) {
+      if (user && user.id && user.username) {
         const socket = connectSocket(user.id, user.username);
 
         socket.on("connect", () => {

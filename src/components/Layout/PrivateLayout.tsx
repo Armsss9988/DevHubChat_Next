@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppSelector } from "@/store/hook";
+import { useAppSelector } from "@/redux/hook";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -11,7 +11,6 @@ export default function PrivateLayout({
 }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const router = useRouter();
-
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");

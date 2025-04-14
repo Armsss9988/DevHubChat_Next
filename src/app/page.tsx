@@ -1,5 +1,5 @@
 "use client";
-import { RootState } from "@/store";
+import { RootState } from "@/redux";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { Provider } from "react-redux";
-import { store } from "@/store";
-import { login } from "@/store/authSlice";
+import { store } from "@/redux/store";
+import { login } from "@/redux/slices/authSlice";
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { Skeleton } from "antd";

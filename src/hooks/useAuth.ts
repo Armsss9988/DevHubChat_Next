@@ -6,10 +6,10 @@ import {
   oauthLogin,
   logout,
 } from "@/services/auth";
-import { useAppDispatch } from "@/store/hook";
-import { logout as logoutRedux } from "@/store/authSlice";
+import { useAppDispatch } from "@/redux/hook";
+import { logout as logoutRedux } from "@/redux/slices/authSlice";
 export const useLogin = () => {
-  return useMutation<User, Error, { email: string; password: string }>({
+  return useMutation({
     mutationFn: async ({
       email,
       password,
@@ -17,8 +17,7 @@ export const useLogin = () => {
       email: string;
       password: string;
     }) => {
-      const res = await login(email, password);
-      return res.data;
+      return await login(email, password);
     },
     onSuccess: (data) => {
       console.log("user from login:", data);
@@ -49,7 +48,7 @@ export const useSignup = () => {
       email: string;
       password: string;
       name: string;
-    }) => signup(email, password, name),
+    }) =>  signup(email, password, name),
   });
 };
 

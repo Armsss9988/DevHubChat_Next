@@ -4,8 +4,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { notification, Form as AntForm, Input, Typography, Button } from "antd";
 import { useLogin } from "@/hooks/useAuth";
-import { useAppDispatch } from "@/store/hook";
-import { login } from "@/store/authSlice";
+import { useAppDispatch } from "@/redux/hook";
+import { login } from "@/redux/slices/authSlice";
 const LoginForm = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -24,13 +24,13 @@ const LoginForm = () => {
           });
 
           dispatch(login({ user: data }));
-          const callbackUrl = searchParams.get("callbackUrl");
-          console.log("callbackUrl", callbackUrl);
-          if (callbackUrl) {
-            router.push(callbackUrl);
-          }
+          // const callbackUrl = searchParams.get("callbackUrl");
+          // console.log("callbackUrl", callbackUrl);
+          // if (callbackUrl) {
+          //   router.push(callbackUrl);
+          // }
 
-          router.push("/room");
+          // router.push("/room");
         },
         onError: (err: Error) => {
           api["error"]({

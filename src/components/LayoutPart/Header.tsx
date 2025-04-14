@@ -12,8 +12,8 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { useLogout } from "@/hooks/useAuth";
-import { RootState } from "@/store";
-import { useAppSelector } from "@/store/hook";
+import { RootState } from "@/redux";
+import { useAppSelector } from "@/redux/hook";
 const Header = () => {
   const router = useRouter();
   const user = useAppSelector((state: RootState) => state?.auth?.user);

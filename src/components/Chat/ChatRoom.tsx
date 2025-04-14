@@ -6,15 +6,16 @@ import UserList from "./UserList";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { useGetRoomById } from "@/hooks/useRoom";
+import { useAppSelector } from "@/redux/hook";
 
 const ChatRoom = ({ roomId }: { roomId: string }) => {
   const { messages, sendMessage, loadMoreMessages, hasMore, onlineUsers } =
     useChatSocket(roomId);
   const { data: room } = useGetRoomById(roomId);
-  const { data: you } = useCurrentUser();
+  const you = useAppSelector((state) => state.auth.user);
+console.log(you);
   const didLoadRef = useRef(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
