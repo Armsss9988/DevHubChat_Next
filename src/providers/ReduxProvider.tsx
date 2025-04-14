@@ -12,22 +12,21 @@ interface ReduxProviderProps {
 }
 
 export default function ReduxProvider({ children }: ReduxProviderProps) {
-  const { data: user, isPending } = useCurrentUser();
-  const [loading, setLoading] = useState(true);
+  const { data: user, isPending, error } = useCurrentUser();
+  const [dispatched, setDispatched] = useState(false);
+
   useEffect(() => {
-    const getUser = async () => {
-      setLoading(true);
-      if (user) {
-        try {
-          store.dispatch(login({ user: user }));
-        } catch (err) {
-          console.error("❌ Invalid token", err);
-        }
-        setLoading(false);
-      }
-    };
-    getUser();
-  }, [user]);
-  if (isPending || loading) return <Skeleton active />;
+    if (!user || dispatched) return;
+
+    try {
+      store.dispatch(login({ user }));
+      setDispatched(true);
+    } catch (err) {
+      console.error("❌ Invalid token", err);
+    }
+  }, [user, dispatched]);
+
+  if (isPending || (!dispatched && !error)) return <Skeleton active />;
+
   return <Provider store={store}>{children}</Provider>;
 }
