@@ -22,15 +22,21 @@ const Header = () => {
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingSignup, setLoadingSignup] = useState(false);
 
-  const logout = useLogout();
+  const { mutate: logout } = useLogout();
 
   const toggleMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   const handleLogout = async () => {
     try {
       setLoadingLogout(true);
-      await logout();
-      router.push("/");
+      logout(undefined, {
+        onSuccess: () => {
+          router.push("/");
+        },
+        onError: () => {
+          setLoadingLogout(false);
+        },
+      });
     } finally {
       setLoadingLogout(false);
     }
