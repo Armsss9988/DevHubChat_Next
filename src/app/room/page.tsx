@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button, Input, Select, Pagination, message, Spin } from "antd";
-import RoomModal from "@/components/Room/RoomModal";
+import RoomModal, { RoomData } from "@/components/Room/RoomModal";
 import RoomList from "@/components/Room/RoomList";
 import { useCreateRoom, useFilterRooms } from "@/hooks/useRoom";
 import { useRouter } from "next/navigation";
@@ -27,16 +27,13 @@ const RoomsPage = () => {
   );
   const { mutate: create, isPending: isCreating } = useCreateRoom();
 
-  const handleCreateRoom = (name: string, description: string) => {
-    create(
-      { name, description },
-      {
-        onSuccess: () => {
-          message.success("Tạo phòng thành công 🎉");
-          setIsModalOpen(false);
-        },
-      }
-    );
+  const handleCreateRoom = (data: RoomData) => {
+    create(data as Room, {
+      onSuccess: () => {
+        message.success("Tạo phòng thành công 🎉");
+        setIsModalOpen(false);
+      },
+    });
   };
 
   const handleRoomClick = (roomId: string) => {
@@ -113,7 +110,7 @@ const RoomsPage = () => {
       <RoomModal
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        onCreate={handleCreateRoom}
+        onSubmit={handleCreateRoom}
         loading={isCreating}
       />
     </div>

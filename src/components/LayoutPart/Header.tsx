@@ -12,11 +12,10 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { useLogout } from "@/hooks/useAuth";
-import { RootState } from "@/redux";
 import { useAppSelector } from "@/redux/hook";
 const Header = () => {
   const router = useRouter();
-  const user = useAppSelector((state: RootState) => state?.auth?.user);
+  const user = useAppSelector((state) => state?.auth?.user);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);

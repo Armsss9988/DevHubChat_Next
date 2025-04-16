@@ -1,12 +1,10 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { notification, Form as AntForm, Input, Typography, Button } from "antd";
 import { useSignup } from "@/hooks/useAuth";
 
 const SignupForm = () => {
-  const router = useRouter();
   const { mutate: signup, isPending } = useSignup();
   const [api, contextHolder] = notification.useNotification();
 
@@ -19,14 +17,12 @@ const SignupForm = () => {
             message: "Đăng ký thành công",
             description: "Xem danh sách phòng nào",
           });
-          router.push("/room");
         },
         onError: (data) => {
           api["error"]({
             message: "Có vấn đề khi Đăng ký",
             description: data.message,
           });
-          router.push("/room");
         },
       }
     );
@@ -113,7 +109,7 @@ const SignupForm = () => {
               className="w-full"
               loading={isPending}
             >
-              Login
+              Signup
             </Button>
           </AntForm>
         )}
