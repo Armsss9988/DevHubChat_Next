@@ -6,6 +6,7 @@ import UserList from "./UserList";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
+import { ChevronDown } from "lucide-react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { useCheckExistJoinRoom, useGetRoomById } from "@/hooks/useRoom";
 import { useAppSelector } from "@/redux/hook";
@@ -24,6 +25,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
+  const [openDropdown, setOpenDropdown] = useState(false);
   const scrollToBottom = () => {
     requestAnimationFrame(() => {
       scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -117,10 +119,76 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
           >
             {showUsers ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
           </button>
-          <ChatHeader
-            roomName={room?.name || ""}
-            description={room?.description || ""}
-          />
+          <div
+            className={`flex items-center flex-row justify-between w-full  ${
+              showUsers && "hidden md:block"
+            }`}
+          >
+            <ChatHeader
+              roomName={room?.name || ""}
+              description={room?.description || ""}
+            />
+
+            {/* Desktop View */}
+            <div className="hidden md:flex flex-row gap-3 items-center">
+              <span
+                className="bg-gradient-to-r from-[#f7e6d3] to-[#d2a679] 
+                     text-[#4b2e13] font-semibold px-3 py-1 rounded-md 
+                     shadow-sm shadow-[#b3875a] 
+                     hover:shadow-md hover:shadow-[#8c5f3b] 
+                     hover:brightness-105 transition duration-300"
+              >
+                {room?.roomCode}
+              </span>
+              <button
+                className="bg-gradient-to-br from-[#c2f0c2] to-[#6de36d] 
+                     text-[#165831] font-semibold py-1.5 px-4 rounded-xl 
+                     shadow-lg shadow-[#3d7e3d] 
+                     hover:from-[#a9e4a9] hover:to-[#57cc57] 
+                     hover:shadow-xl hover:shadow-[#2e6b2e] 
+                     transition-all duration-300 ease-in-out"
+              >
+                Subscribe Room
+              </button>
+            </div>
+
+            {/* Mobile View Dropdown */}
+            <div className={`relative md:hidden mt-3 w-full flex justify-end`}>
+              <span
+                onClick={() => setOpenDropdown(!openDropdown)}
+                className="flex flex-row items-center gap-2 px-3 py-1.5 bg-[#eee1d1] text-[#4b2e13] rounded-md font-medium shadow hover:brightness-105 transition"
+              >
+                <MenuFoldOutlined />
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    openDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </span>
+
+              {openDropdown && (
+                <div className="absolute right-0 mt-10 w-56 bg-white border border-[#d4cbb4] rounded-md shadow-lg p-4 space-y-3 z-10">
+                  <div
+                    className="bg-gradient-to-r from-[#f7e6d3] to-[#d2a679] 
+                         text-[#4b2e13] font-semibold px-3 py-1 rounded-md 
+                         shadow-sm shadow-[#b3875a]"
+                  >
+                    Room Code: {room?.roomCode}
+                  </div>
+                  <button
+                    className="w-full bg-gradient-to-br from-[#c2f0c2] to-[#6de36d] 
+                         text-[#165831] font-semibold py-2 rounded-xl 
+                         shadow-md shadow-[#3d7e3d] 
+                         hover:from-[#a9e4a9] hover:to-[#57cc57] 
+                         hover:shadow-lg hover:shadow-[#2e6b2e] 
+                         transition-all duration-300 ease-in-out"
+                  >
+                    Subscribe Room
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div
@@ -136,7 +204,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
           ))}
           <div ref={scrollAnchorRef} /> {/* 🔻 Đây là anchor ở cuối */}
         </div>
-        <div className="h-12">
+        <div className="max-h-12">
           <ChatInput onSend={handleSendMessage} />
         </div>
       </div>
