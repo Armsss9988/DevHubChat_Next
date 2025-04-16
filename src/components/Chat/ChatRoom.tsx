@@ -7,25 +7,45 @@ import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { useGetRoomById } from "@/hooks/useRoom";
+import { useCheckExistJoinRoom, useGetRoomById } from "@/hooks/useRoom";
 import { useAppSelector } from "@/redux/hook";
-
+import { useRouter } from "next/navigation";
+import { message } from "antd";
 const ChatRoom = ({ roomId }: { roomId: string }) => {
   const { messages, sendMessage, loadMoreMessages, hasMore, onlineUsers } =
     useChatSocket(roomId);
   const { data: room } = useGetRoomById(roomId);
   const you = useAppSelector((state) => state.auth.user);
-console.log(you);
+  const { mutate: checkRoom } = useCheckExistJoinRoom();
   const didLoadRef = useRef(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
   const [showUsers, setShowUsers] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
   const scrollToBottom = () => {
     requestAnimationFrame(() => {
       scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
     });
   };
+  useEffect(() => {
+    checkRoom(
+      { roomId },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            messageApi.success("Chào mừng bạn vào room");
+          } else {
+            router.push("/rooms");
+          }
+        },
+        onError: () => {
+          router.push("/rooms");
+        },
+      }
+    );
+  }, [checkRoom, messageApi, roomId, router]);
   useEffect(() => {
     if (!firstRender.current) {
       scrollToBottom();
@@ -80,6 +100,7 @@ console.log(you);
 
   return (
     <div className="flex flex-1 h-full pt-10 bg-transparent overflow-hidden">
+      {contextHolder}
       <div
         className={`transition-all duration-300 bg-[#c5b395] md:block h-full z-10 shadow-[10px_10px_5px_rgba(0,0,0,0.3)] rounded-tr-3xl ${
           showUsers ? "w-3/5 md:w-1/5" : "w-0 md:w-1/5 hidden overflow-hidden"
