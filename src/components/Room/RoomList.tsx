@@ -10,19 +10,11 @@ import {
   Form,
   message,
 } from "antd";
-import {
-  ClockCircleOutlined,
-  UserOutlined,
-  LockOutlined,
-  UnlockTwoTone,
-} from "@ant-design/icons";
+import { UserOutlined, LockOutlined, UnlockTwoTone } from "@ant-design/icons";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
-import {
-  useCheckExistJoinRoom,
-  useFindRoomByCode,
-  useJoinRoom,
-} from "@/hooks/useRoom";
+import { useFindRoomByCode, useJoinRoom } from "@/hooks/useRoom";
+import { AutoScrollText } from "../UI/AutoScrollText";
 
 interface RoomListProps {
   rooms: Room[];
@@ -40,36 +32,19 @@ const RoomList: React.FC<RoomListProps> = ({
   const [passwordForm] = Form.useForm();
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
-  const { mutate: checkRoom } = useCheckExistJoinRoom();
   const { mutate: joinRoom, isPending: isJoinning } = useJoinRoom();
   const { mutate: findByCode, isPending: isFinding } = useFindRoomByCode();
   const handleRoomClick = (room: Room) => {
-    if (!room.hasPassword) {
+    if (!room.hasPassword || room.isJoined) {
+      messageApi.success("Bạn đã đăng nhập vào room");
       onClickRoom(room.id || "");
       return;
     }
 
     const roomId = room.id || "";
-    checkRoom(
-      { roomId },
-      {
-        onSuccess: (data) => {
-          if (data) {
-            messageApi.success("Bạn đã đăng nhập vào room");
-            onClickRoom(roomId);
-          } else {
-            setSelectedRoomId(roomId);
-            setPasswordModalOpen(true);
-          }
-        },
-        onError: () => {
-          messageApi.warning("Bạn cần nhập mật khẩu");
-          setSelectedRoomId(roomId);
-          setPasswordModalOpen(true);
-        },
-      }
-    );
+    messageApi.warning("Bạn cần nhập mật khẩu");
+    setSelectedRoomId(roomId);
+    setPasswordModalOpen(true);
   };
 
   const handlePasswordSubmit = async () => {
@@ -150,17 +125,11 @@ const RoomList: React.FC<RoomListProps> = ({
                   <Tooltip title="Users Online">
                     <div className="flex items-center space-x-1 text-[#4E6C50] text-sm">
                       <UserOutlined />
-                      <span>{room.usersOnline ?? 0}</span>
+                      <span>{room.subCount ?? 0}</span>
                     </div>
                   </Tooltip>
                 </div>
-                <Typography.Paragraph
-                  type="secondary"
-                  ellipsis={{ rows: 2 }}
-                  style={{ color: "#4E6C50" }}
-                >
-                  {room.description}
-                </Typography.Paragraph>
+                <AutoScrollText text={room.description} />
                 <div className="flex items-center text-xs text-[#AA8B56] mt-2">
                   <UserOutlined className="mr-1" />
                   <span>Created by: {room.creator.username}</span>
@@ -169,7 +138,7 @@ const RoomList: React.FC<RoomListProps> = ({
                   <span>Code: {room.roomCode}</span>
                 </div>
                 <div className="flex items-center text-xs text-[#AA8B56] mt-1">
-                  <ClockCircleOutlined className="mr-1" />
+                  {room.isSub ? "Subscribed" : "Unsubscribed"}
                 </div>
               </Card>
 

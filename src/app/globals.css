@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+.scroll-wrapper {
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+}
+
+.scroll-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-horizontal 10s linear infinite;
+}
+
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Ngưng scroll nếu không cần */
+.scroll-wrapper.no-scroll .scroll-content {
+  animation: none;
+  transform: translateX(0);
+  padding-left: 0;
+}
+
 :root {
   --color-primary: #395144;
   --color-secondary: #4e6c50;
@@ -33,7 +61,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 a {

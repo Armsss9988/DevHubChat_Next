@@ -37,7 +37,7 @@ export const useFindRoomByCode = () => {
 
 export const useCheckExistJoinRoom = () => {
   return useMutation({
-    mutationFn: ({ roomId }: { roomId: string }) => checkExistJoin(roomId),
+    mutationFn: (roomId:string) => checkExistJoin(roomId),
     onSuccess: () => {
       console.log("Tao gọi được nha");
     },

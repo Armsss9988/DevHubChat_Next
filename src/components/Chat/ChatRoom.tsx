@@ -12,6 +12,11 @@ import { useCheckExistJoinRoom, useGetRoomById } from "@/hooks/useRoom";
 import { useAppSelector } from "@/redux/hook";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
+import {
+  useCheckSubscribeRoom,
+  useSubscribeRoom,
+  useUnsubscribeRoom,
+} from "@/hooks/useSubscribe";
 const ChatRoom = ({ roomId }: { roomId: string }) => {
   const { messages, sendMessage, loadMoreMessages, hasMore, onlineUsers } =
     useChatSocket(roomId);
@@ -26,27 +31,34 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [openDropdown, setOpenDropdown] = useState(false);
+  const { data: checkSub } = useCheckSubscribeRoom(roomId);
+  const { mutateAsync: subscribe } = useSubscribeRoom();
+  const { mutateAsync: unsubscribe } = useUnsubscribeRoom();
+  const handleToggleSub = async () => {
+    if (checkSub) {
+      await unsubscribe(roomId);
+    } else {
+      await subscribe(roomId);
+    }
+  };
   const scrollToBottom = () => {
     requestAnimationFrame(() => {
       scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
     });
   };
   useEffect(() => {
-    checkRoom(
-      { roomId },
-      {
-        onSuccess: (data) => {
-          if (data) {
-            messageApi.success("Chào mừng bạn vào room");
-          } else {
-            router.push("/rooms");
-          }
-        },
-        onError: () => {
+    checkRoom(roomId, {
+      onSuccess: (data) => {
+        if (data) {
+          messageApi.success("Chào mừng bạn vào room");
+        } else {
           router.push("/rooms");
-        },
-      }
-    );
+        }
+      },
+      onError: () => {
+        router.push("/rooms");
+      },
+    });
   }, [checkRoom, messageApi, roomId, router]);
   useEffect(() => {
     if (!firstRender.current) {
@@ -141,14 +153,19 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
                 {room?.roomCode}
               </span>
               <button
-                className="bg-gradient-to-br from-[#c2f0c2] to-[#6de36d] 
+                onClick={handleToggleSub}
+                className={`bg-gradient-to-br ${
+                  checkSub
+                    ? " from-[#c2f0c2] to-[#6de36d]"
+                    : "from-[#cc5511] to-[#403d04]"
+                }
                      text-[#165831] font-semibold py-1.5 px-4 rounded-xl 
                      shadow-lg shadow-[#3d7e3d] 
                      hover:from-[#a9e4a9] hover:to-[#57cc57] 
                      hover:shadow-xl hover:shadow-[#2e6b2e] 
-                     transition-all duration-300 ease-in-out"
+                     transition-all duration-300 ease-in-out`}
               >
-                Subscribe Room
+                {!checkSub ? "Unsubscribed" : "Subscribed"}
               </button>
             </div>
 
@@ -176,14 +193,15 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
                     Room Code: {room?.roomCode}
                   </div>
                   <button
-                    className="w-full bg-gradient-to-br from-[#c2f0c2] to-[#6de36d] 
-                         text-[#165831] font-semibold py-2 rounded-xl 
-                         shadow-md shadow-[#3d7e3d] 
-                         hover:from-[#a9e4a9] hover:to-[#57cc57] 
-                         hover:shadow-lg hover:shadow-[#2e6b2e] 
-                         transition-all duration-300 ease-in-out"
+                    onClick={handleToggleSub}
+                    className="bg-gradient-to-br from-[#c2f0c2] to-[#6de36d] 
+                     text-[#165831] font-semibold py-1.5 px-4 rounded-xl 
+                     shadow-lg shadow-[#3d7e3d] 
+                     hover:from-[#a9e4a9] hover:to-[#57cc57] 
+                     hover:shadow-xl hover:shadow-[#2e6b2e] 
+                     transition-all duration-300 ease-in-out"
                   >
-                    Subscribe Room
+                    {!checkSub ? "Subscribe Room" : "UnSubscribe Room"}
                   </button>
                 </div>
               )}
@@ -202,7 +220,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
               isMe={msg.user?.id === you?.id}
             />
           ))}
-          <div ref={scrollAnchorRef} /> {/* 🔻 Đây là anchor ở cuối */}
+          <div ref={scrollAnchorRef} />
         </div>
         <div className="max-h-12">
           <ChatInput onSend={handleSendMessage} />

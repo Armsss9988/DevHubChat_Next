@@ -9,7 +9,7 @@ declare global {
     loadingRoomId?: string;
   }
   interface Room {
-    id?: string;
+    id: string;
     name: string;
     description: string;
     roomCode: string;
@@ -21,6 +21,8 @@ declare global {
     hasPassword?: string;
     usersOnline?: number;
     isJoined?: boolean;
+    isSub?: boolean;
+    subCount?: number;
   }
 }
 export {};
