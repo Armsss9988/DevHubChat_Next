@@ -19,6 +19,7 @@ export const useFilterRooms = (
   return useQuery({
     queryKey: ["rooms", name, page, pageSize],
     queryFn: () => filterRooms(name, page, pageSize),
+    refetchOnWindowFocus:false
   });
 };
 
@@ -26,7 +27,7 @@ export const useFindRoomByCode = () => {
   return useMutation({
     mutationFn: (code: string) => findRoomByCode(code),
     onSuccess: () => {
-      console.log("Tao gọi được nha");
+      console.log("Ta gọi được nha");
     },
     onError: (error: unknown) => {
       console.error("Failed to check room:", error);
@@ -39,7 +40,7 @@ export const useCheckExistJoinRoom = () => {
   return useMutation({
     mutationFn: (roomId:string) => checkExistJoin(roomId),
     onSuccess: () => {
-      console.log("Tao gọi được nha");
+      console.log("Ta gọi được nha");
     },
     onError: (error: unknown) => {
       console.error("Failed to check room:", error);
@@ -53,7 +54,7 @@ export const useJoinRoom = () => {
     mutationFn: ({ roomId, password }: { roomId: string; password: string }) =>
       joinRoom(roomId, password),
     onSuccess: () => {
-      console.log("Tao gọi được nha");
+      console.log("Ta gọi được nha");
     },
     onError: (error: unknown) => {
       console.error("Failed to join room:", error);
@@ -67,6 +68,7 @@ export const useGetRoomById = (roomId: string) => {
     queryKey: ["room", roomId],
     queryFn: () => getRoomById(roomId),
     enabled: !!roomId,
+    refetchOnWindowFocus:false
   });
 };
 
@@ -77,7 +79,7 @@ export const useCreateRoom = () => {
     mutationFn: (data: Room) => createRoom(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
-      console.log("Tao gọi được nha");
+      console.log("Ta gọi được nha");
     },
     onError: (error: unknown) => {
       console.error("Failed to create room:", error);

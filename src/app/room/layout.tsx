@@ -6,7 +6,6 @@ import "@ant-design/v5-patch-for-react-19";
 //   QueryClient,
 // } from "@tanstack/react-query";
 // import { getRooms } from "@/services/room";
-import { WebsocketProvider } from "@/providers/WebsocketProvider";
 import PrivateLayout from "@/components/Layout/PrivateLayout";
 
 export const metadata: Metadata = {
@@ -27,9 +26,7 @@ export default async function RoomLayout({
   return (
     // <HydrationBoundary state={dehydrate(queryClient)}>
     <PrivateLayout>
-      <WebsocketProvider>
-        <div className="h-full overflow-hidden">{children}</div>
-      </WebsocketProvider>
+      <div className="h-full overflow-hidden">{children}</div>
     </PrivateLayout>
     // </HydrationBoundary>
   );
