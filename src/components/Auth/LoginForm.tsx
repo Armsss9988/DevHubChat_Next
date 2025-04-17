@@ -6,7 +6,6 @@ import { useLogin } from "@/hooks/useAuth";
 import { useAppDispatch } from "@/redux/hook";
 import { login } from "@/redux/slices/authSlice";
 const LoginForm = () => {
-
   const dispatch = useAppDispatch();
   const { mutate: loginMutate, isPending } = useLogin();
   const [api, contextHolder] = notification.useNotification();
@@ -22,12 +21,11 @@ const LoginForm = () => {
           });
 
           dispatch(login({ user: data }));
-        
         },
         onError: (err: Error) => {
           api["error"]({
             message: "Có vấn đề khi đăng nhập",
-            description: err.message + JSON.stringify(err),
+            description: err.message,
           });
         },
       }

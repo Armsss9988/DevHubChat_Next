@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "../providers/ReactQueryProviders";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Header from "@/components/LayoutPart/Header";
 import { Suspense } from "react";
 import ReduxProvider from "@/providers/ReduxProvider";
+import { WebsocketProvider } from "../providers/WebsocketProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,9 +25,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-    
     <html lang="en">
       <head>
         <meta
@@ -41,10 +39,10 @@ export default async function RootLayout({
         <Suspense fallback={<div>Loading...</div>}>
           <ReactQueryProvider>
             <ReduxProvider>
-              <Header />
-              {children}
-
-              <ReactQueryDevtools initialIsOpen={false} />
+              <WebsocketProvider>
+                <Header />
+                {children}
+              </WebsocketProvider>
             </ReduxProvider>
           </ReactQueryProvider>
         </Suspense>

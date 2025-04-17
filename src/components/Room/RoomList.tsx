@@ -113,7 +113,7 @@ const RoomList: React.FC<RoomListProps> = ({
                 <div className="flex items-center justify-between mb-2">
                   <Typography.Text strong style={{ color: "#395144" }}>
                     <span className="flex items-center">
-                      {room.name}
+                      <AutoScrollText text={room.name} />
                       {room.hasPassword &&
                         (!room.isJoined ? (
                           <LockOutlined className="ml-2 text-[#AA8B56]" />

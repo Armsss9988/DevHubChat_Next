@@ -14,37 +14,35 @@ export const WebsocketProvider = ({
   useEffect(() => {
     setIsClient(true);
   }, []);
+
   useEffect(() => {
-    const init = async () => {
-      if (user && user.id && user.username) {
-        const socket = connectSocket(user.id, user.username);
+    if (!user?.id || !user.username) return;
 
-        socket.on("connect", () => {
-          console.log("✅ Socket connected");
-          setIsConnected(true);
-        });
+    const socket = connectSocket(user.id, user.username);
 
-        socket.on("disconnect", () => {
-          console.warn("⚠️ Socket disconnected");
-          setIsConnected(false);
-        });
+    socket.on("connect", () => {
+      console.log("✅ Socket connected");
+      setIsConnected(true);
+    });
 
-        socket.on("connect_error", (err) => {
-          console.error("❌ Connect error:", err.message);
-          setIsConnected(false);
-        });
-      }
-    };
+    socket.on("disconnect", () => {
+      console.warn("⚠️ Socket disconnected");
+      setIsConnected(false);
+    });
 
-    init();
+    socket.on("connect_error", (err) => {
+      console.error("❌ Connect error:", err.message);
+      setIsConnected(false);
+    });
 
     return () => {
       disconnectSocket();
       setIsConnected(false);
     };
-  }, [user]);
+  }, [user?.id, user?.username]);
+
   if (!isClient) return null;
-  if (!isConnected) {
+  if (!isConnected && user) {
     return (
       <div className="w-full h-screen flex items-center justify-center text-lg">
         🔌 Đang kết nối đến server...

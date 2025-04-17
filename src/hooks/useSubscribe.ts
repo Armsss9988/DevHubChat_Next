@@ -38,5 +38,6 @@ export const useCheckSubscribeRoom = (
     queryKey: ["isSubscribed", roomId],
     queryFn: () => isSubscribeFromRoom(roomId),
     enabled: !!roomId,
+    refetchOnWindowFocus:false
   });
 };
