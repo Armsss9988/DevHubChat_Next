@@ -57,7 +57,7 @@ const Header = () => {
         })
       );
       setNotifications(notiData);
-      if (notificationGet && notificationGet[0] && notificationGet[0].isRead) {
+      if (notificationGet && notificationGet[0] && !notificationGet[0].isRead) {
         setHasUnread(true);
         setUnreadCount(1);
         setFaviconWithNotification();
