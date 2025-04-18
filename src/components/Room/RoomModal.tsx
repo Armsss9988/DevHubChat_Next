@@ -16,7 +16,7 @@ interface RoomModalProps {
   onCancel: () => void;
   onSubmit: (data: RoomData) => void;
   loading: boolean;
-  room?: RoomData; // Dữ liệu phòng hiện có (cho update)
+  room?: RoomData;
 }
 
 const RoomModal: React.FC<RoomModalProps> = ({
@@ -28,7 +28,6 @@ const RoomModal: React.FC<RoomModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const user = useAppSelector((state) => state.auth.user);
-  // Điền sẵn dữ liệu khi room thay đổi (update mode)
   useEffect(() => {
     if (room) {
       form.setFieldsValue({
@@ -66,6 +65,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
       className="custom-modal"
     >
       <Form
+        onFinish={handleSubmit}
         form={form}
         layout="vertical"
         className="space-y-2"
@@ -99,6 +99,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
           <Button onClick={onCancel}>Cancel</Button>
           <Button
             type="primary"
+            htmlType="submit"
             onClick={handleSubmit}
             loading={loading}
             className="bg-[#395144] hover:bg-[#4E6C50] border-none text-white"

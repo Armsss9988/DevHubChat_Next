@@ -1,14 +1,24 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getMyNotifications,
   markAllNotificationsAsRead,
-} from '@/services/notification';
+  markRoomAsRead,
+} from "@/services/notification";
 
 export const useNotifications = () => {
   return useQuery({
-    queryKey: ['notifications'],
-    queryFn: ()=> getMyNotifications(),
-    refetchOnWindowFocus:false
+    queryKey: ["notifications"],
+    queryFn: () => getMyNotifications(),
+    refetchOnWindowFocus: false,
+  });
+};
+export const useMarkRoomAsRead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (roomId: string) => markRoomAsRead(roomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };
 
@@ -18,8 +28,7 @@ export const useMarkAllNotificationsAsRead = () => {
   return useMutation({
     mutationFn: markAllNotificationsAsRead,
     onSuccess: () => {
-      // invalidate để reload lại danh sách mới
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 };

@@ -6,6 +6,7 @@ import Header from "@/components/LayoutPart/Header";
 import { Suspense } from "react";
 import ReduxProvider from "@/providers/ReduxProvider";
 import { WebsocketProvider } from "../providers/WebsocketProvider";
+import { ToastProvider } from "@/providers/ToastProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,14 +38,16 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex-1 flex flex-col overflow-hidden`}
       >
         <Suspense fallback={<div>Loading...</div>}>
-          <ReactQueryProvider>
-            <ReduxProvider>
-              <WebsocketProvider>
-                <Header />
-                {children}
-              </WebsocketProvider>
-            </ReduxProvider>
-          </ReactQueryProvider>
+          <ToastProvider>
+            <ReactQueryProvider>
+              <ReduxProvider>
+                <WebsocketProvider>
+                  <Header />
+                  {children}
+                </WebsocketProvider>
+              </ReduxProvider>
+            </ReactQueryProvider>
+          </ToastProvider>
         </Suspense>
       </body>
     </html>

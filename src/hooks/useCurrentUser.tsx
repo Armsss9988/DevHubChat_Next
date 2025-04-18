@@ -8,6 +8,6 @@ export function useCurrentUser() {
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: 1,
+    retry: 0,
   });
 }

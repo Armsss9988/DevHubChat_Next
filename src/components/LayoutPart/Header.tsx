@@ -48,10 +48,10 @@ const Header = () => {
       const notiData: NotificationPayload[] = notificationGet.map(
         (noti: Notification) => ({
           type: "NEW_MESSAGE",
-          roomId: noti.roomId,
+          roomId: noti.room.id,
           roomName: noti.room.name,
-          fromUserId: noti.userId,
-          fromUsername: noti.user.username,
+          fromUserId: noti.message.user?.id,
+          fromUsername: noti.message.user?.username,
           isRead: noti.isRead,
           message: noti.message.content,
         })

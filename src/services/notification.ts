@@ -5,6 +5,11 @@ export const getMyNotifications = async () => {
   return res.data;
 };
 
+export const markRoomAsRead = async (roomId: string) => {
+  const res = await axios.patch("/notifications/mark-room-read", { roomId });
+  return res.data;
+};
+
 export const markAllNotificationsAsRead = async () => {
   const res = await axios.patch("/notifications/mark-all-read");
   return res.data;

@@ -9,7 +9,7 @@ export const WebsocketProvider = ({
   children: React.ReactNode;
 }) => {
   const user = useAppSelector((state) => state.auth.user);
-  const [isConnected, setIsConnected] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false);
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
@@ -22,33 +22,33 @@ export const WebsocketProvider = ({
 
     socket.on("connect", () => {
       console.log("✅ Socket connected");
-      setIsConnected(true);
+      // setIsConnected(true);
     });
 
     socket.on("disconnect", () => {
       console.warn("⚠️ Socket disconnected");
-      setIsConnected(false);
+      // setIsConnected(false);
     });
 
     socket.on("connect_error", (err) => {
       console.error("❌ Connect error:", err.message);
-      setIsConnected(false);
+      // setIsConnected(false);
     });
 
     return () => {
       disconnectSocket();
-      setIsConnected(false);
+      // setIsConnected(false);
     };
   }, [user?.id, user?.username]);
 
   if (!isClient) return null;
-  if (!isConnected && user) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center text-lg">
-        🔌 Đang kết nối đến server...
-      </div>
-    );
-  }
+  // if (!isConnected && user) {
+  //   return (
+  //     <div className="w-full h-screen flex items-center justify-center text-lg">
+  //       🔌 Đang kết nối đến server...
+  //     </div>
+  //   );
+  // }
 
   return <>{children}</>;
 };

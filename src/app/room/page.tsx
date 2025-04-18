@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Button, Input, Select, Pagination, message, Spin } from "antd";
+import { Button, Input, Select, Pagination, Spin } from "antd";
 import RoomModal, { RoomData } from "@/components/Room/RoomModal";
 import RoomList from "@/components/Room/RoomList";
 import { useCreateRoom, useFilterRooms } from "@/hooks/useRoom";
 import { useRouter } from "next/navigation";
+import { useToastMessage } from "@/hooks/useToastMessage";
+import { useGlobalToast } from "@/providers/ToastProvider";
 
 const pageSizeOptions = [4, 12, 18, 24];
 
@@ -17,22 +19,28 @@ const RoomsPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
-
+  const [isOwner, setIsOwner] = useState(false);
+  const [isSub, setIsSub] = useState(false);
+  const [messageApi] = useGlobalToast();
+  const { toastError } = useToastMessage();
   const router = useRouter();
 
   const { data, isLoading } = useFilterRooms(
     debouncedSearch,
     currentPage,
-    pageSize
+    pageSize,
+    isOwner,
+    isSub
   );
   const { mutate: create, isPending: isCreating } = useCreateRoom();
 
   const handleCreateRoom = (data: RoomData) => {
     create(data as Room, {
       onSuccess: () => {
-        message.success("Tạo phòng thành công 🎉");
+        messageApi.success("Tạo phòng thành công 🎉");
         setIsModalOpen(false);
       },
+      onError: toastError,
     });
   };
 
@@ -41,11 +49,10 @@ const RoomsPage = () => {
     router.push(`/room/${roomId}`);
   };
 
-  // Debounce input để tránh spam query
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchTerm);
-      setCurrentPage(1); // reset về page 1 khi search
+      setCurrentPage(1);
     }, 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
@@ -74,11 +81,33 @@ const RoomsPage = () => {
             className="w-[200px]"
           />
 
+          <Button
+            type={isOwner ? "primary" : "default"}
+            onClick={() => {
+              setIsOwner(!isOwner);
+              setCurrentPage(1);
+            }}
+            className={isOwner ? "bg-green-600 text-white border-none" : ""}
+          >
+            {isOwner ? "✓" : ""} Phòng tôi tạo
+          </Button>
+
+          <Button
+            type={isSub ? "primary" : "default"}
+            onClick={() => {
+              setIsSub(!isSub);
+              setCurrentPage(1);
+            }}
+            className={isSub ? "bg-green-600 text-white border-none" : ""}
+          >
+            {isSub ? "✓" : ""} Đã theo dõi
+          </Button>
+
           <Select
             value={pageSize}
             onChange={(value) => {
               setPageSize(value);
-              setCurrentPage(1); // reset page
+              setCurrentPage(1);
             }}
             options={pageSizeOptions.map((s) => ({
               value: s,
@@ -94,6 +123,27 @@ const RoomsPage = () => {
           >
             + Tạo phòng mới
           </Button>
+
+          {/* <Select
+            value={pageSize}
+            onChange={(value) => {
+              setPageSize(value);
+              setCurrentPage(1);
+            }}
+            options={pageSizeOptions.map((s) => ({
+              value: s,
+              label: `${s}/trang`,
+            }))}
+            style={{ width: 120 }}
+          />
+
+          <Button
+            type="primary"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#395144] hover:bg-[#4E6C50] border-none text-white"
+          >
+            + Tạo phòng mới
+          </Button> */}
         </div>
       </div>
       <div className="h-[570px] md:h-[500px] overflow-y-auto p-4 pr-6 rounded-sm shadow-xl border-solid border-2 border-[#1b4b2688] scrollbar-green">

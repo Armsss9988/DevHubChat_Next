@@ -17,6 +17,7 @@ export const useSubscribeRoom = () => {
     mutationFn: (roomId: string) => subscribeToRoom(roomId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isSubscribed"] });
+      queryClient.invalidateQueries({ queryKey: ["subscribedRooms"] });
     },
   });
 };
@@ -28,6 +29,7 @@ export const useUnsubscribeRoom = () => {
     mutationFn: (roomId: string) => unsubscribeFromRoom(roomId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isSubscribed"] });
+      queryClient.invalidateQueries({ queryKey: ["subscribedRooms"] });
     },
   });
 };

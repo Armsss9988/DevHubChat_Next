@@ -8,18 +8,22 @@ import {
   joinRoom,
   checkExistJoin,
   findRoomByCode,
+  getMyRooms,
+  getSubscribedRooms,
 } from "@/services/room";
 import { message } from "antd";
 
 export const useFilterRooms = (
   name: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  isSub: boolean,
+  owner: boolean
 ) => {
   return useQuery({
-    queryKey: ["rooms", name, page, pageSize],
-    queryFn: () => filterRooms(name, page, pageSize),
-    refetchOnWindowFocus:false
+    queryKey: ["rooms", name, page, pageSize, isSub, owner],
+    queryFn: () => filterRooms(name, page, pageSize, isSub, owner),
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -38,7 +42,7 @@ export const useFindRoomByCode = () => {
 
 export const useCheckExistJoinRoom = () => {
   return useMutation({
-    mutationFn: (roomId:string) => checkExistJoin(roomId),
+    mutationFn: (roomId: string) => checkExistJoin(roomId),
     onSuccess: () => {
       console.log("Ta gọi được nha");
     },
@@ -68,7 +72,7 @@ export const useGetRoomById = (roomId: string) => {
     queryKey: ["room", roomId],
     queryFn: () => getRoomById(roomId),
     enabled: !!roomId,
-    refetchOnWindowFocus:false
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -127,3 +131,15 @@ export const useDeleteRoom = () => {
     },
   });
 };
+export const useMyRooms = () =>
+  useQuery({
+    queryKey: ["myRooms"],
+    queryFn: getMyRooms,
+  });
+
+// Danh sách các phòng user đã subscribe
+export const useSubscribedRooms = () =>
+  useQuery({
+    queryKey: ["subscribedRooms"],
+    queryFn: getSubscribedRooms,
+  });

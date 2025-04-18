@@ -5,7 +5,6 @@ import { store } from "@/redux/store";
 import { login } from "@/redux/slices/authSlice";
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { Skeleton } from "antd";
 
 interface ReduxProviderProps {
   children: React.ReactNode;
@@ -26,7 +25,7 @@ export default function ReduxProvider({ children }: ReduxProviderProps) {
     }
   }, [user, dispatched]);
 
-  if (isPending || (!dispatched && !error)) return <Skeleton active />;
+  if (isPending || (!dispatched && !error)) return;
 
   return <Provider store={store}>{children}</Provider>;
 }

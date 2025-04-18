@@ -23,9 +23,8 @@ axiosInstance.interceptors.response.use(
           ] = `Bearer ${refresh.data.accessToken}`;
           return axiosInstance(error.config);
         }
-      } catch {
-        // window.location.href = `/login?callbackUrl=${window.location.pathname}`;
-      }
+        window.location.href = `/login?callbackUrl=${window.location.pathname}`;
+      } catch {}
     }
     return Promise.reject(error);
   }

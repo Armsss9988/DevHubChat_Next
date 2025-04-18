@@ -1,40 +1,36 @@
 "use client";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { notification, Form as AntForm, Input, Typography, Button } from "antd";
+import { Form as AntForm, Input, Typography, Button } from "antd";
 import { useLogin } from "@/hooks/useAuth";
 import { useAppDispatch } from "@/redux/hook";
 import { login } from "@/redux/slices/authSlice";
+import { useToastMessage } from "@/hooks/useToastMessage";
+import { useGlobalToast } from "@/providers/ToastProvider";
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const { mutate: loginMutate, isPending } = useLogin();
-  const [api, contextHolder] = notification.useNotification();
-
+  const [messageApi] = useGlobalToast();
+  const { toastError } = useToastMessage();
   const handleSubmit = (email: string, password: string) => {
     loginMutate(
       { email, password },
       {
         onSuccess: (data) => {
-          api["success"]({
-            message: "Đăng nhập thành công",
-            description: "Xem danh sách phòng nào",
-          });
-
+          // api["success"]({
+          //   message: "Đăng nhập thành công",
+          //   description: "Xem danh sách phòng nào",
+          // });
+          messageApi.success("Đăng nhập thành công");
           dispatch(login({ user: data }));
         },
-        onError: (err: Error) => {
-          api["error"]({
-            message: "Có vấn đề khi đăng nhập",
-            description: err.message,
-          });
-        },
+        onError: toastError,
       }
     );
   };
 
   return (
     <div>
-      {contextHolder}
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={Yup.object({

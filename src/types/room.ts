@@ -23,6 +23,7 @@ declare global {
     isJoined?: boolean;
     isSub?: boolean;
     subCount?: number;
+    unreadCount?: number;
   }
 }
 export {};

@@ -8,13 +8,14 @@ import {
   Input,
   Button,
   Form,
-  message,
 } from "antd";
 import { UserOutlined, LockOutlined, UnlockTwoTone } from "@ant-design/icons";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
 import { useFindRoomByCode, useJoinRoom } from "@/hooks/useRoom";
 import { AutoScrollText } from "../UI/AutoScrollText";
+import { useGlobalToast } from "../../providers/ToastProvider";
+import { useToastMessage } from "@/hooks/useToastMessage";
 
 interface RoomListProps {
   rooms: Room[];
@@ -27,11 +28,13 @@ const RoomList: React.FC<RoomListProps> = ({
   onClickRoom,
   loadingRoomId,
 }) => {
-  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [passwordForm] = Form.useForm();
   const [passwordLoading, setPasswordLoading] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi] = useGlobalToast();
+  const { toastError } = useToastMessage();
   const { mutate: joinRoom, isPending: isJoinning } = useJoinRoom();
   const { mutate: findByCode, isPending: isFinding } = useFindRoomByCode();
   const handleRoomClick = (room: Room) => {
@@ -88,15 +91,12 @@ const RoomList: React.FC<RoomListProps> = ({
                 messageApi.success("Vào đi nha");
                 handleRoomClick(data);
               },
-              onError: () => {
-                messageApi.error("Không tìm thấy room với mã này");
-              },
+              onError: toastError,
             });
           }}
         />
       </div>
       <div className="grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-        {contextHolder}
         {rooms?.map((room) => {
           const isLoading = room.id === loadingRoomId;
 
