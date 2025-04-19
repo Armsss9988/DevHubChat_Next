@@ -6,6 +6,10 @@
 
 ## 🔥 Tech Stack
 
+### Websocket flow (drawn by AI)
+
+![image](https://github.com/user-attachments/assets/68cbc150-f1fd-407b-887a-b1cd5f3ad01c)
+
 ### Frontend
 - **Next.js 14 (App Router)**
 - **ANTD**
