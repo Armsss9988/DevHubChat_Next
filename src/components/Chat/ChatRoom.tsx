@@ -16,7 +16,6 @@ import {
 } from "@/hooks/useSubscribe";
 
 const ChatRoom = ({ roomId }: { roomId: string }) => {
-
   const { messages, sendMessage, loadMoreMessages, hasMore } =
     useChatSocket(roomId);
   const { data: room } = useGetRoomById(roomId);
@@ -99,7 +98,7 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
       roomId,
     });
   };
-
+  if (!room) return;
   return (
     <div className="flex flex-col h-full flex-1 rounded-t-2xl overflow-hidden">
       <div className="flex items-center justify-between p-3 border-b bg-gradient-to-br from-[#0e831d] to-[#576752] shadow-[10px_10px_5px_rgba(0,0,0,0.3)] z-1 gap-3">
@@ -175,7 +174,6 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
         <div ref={scrollAnchorRef} />
       </div>
       <ChatInput onSend={handleSendMessage} />
-   
     </div>
   );
 };

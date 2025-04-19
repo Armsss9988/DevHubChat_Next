@@ -1,7 +1,17 @@
 # ⚡ Real-time Dev Chat App
 
-> 💬 Một mini Slack/Discord cho developer, viết bằng Next.js + .NET Core, hỗ trợ chat real-time, gửi code, markdown, file, quản lý room, thông báo chưa đọc.
+> 💬 Một mini Slack/Discord, viết bằng Next.js + .NET Core, hỗ trợ chat real-time message, quản lý room, subscribe, thông báo chưa đọc.
 
+💡 Purpose:
+This project was built as a learning sandbox to explore and experiment with modern technologies like WebSockets (NestJS), Next.js, Prisma, and Nestjs. It’s not production-ready — it’s meant for hands-on learning, testing features, and improving development skills.
+
+⚠️ Disclaimer:
+
+The codebase has not been fully refactored yet, and there might be small bugs or non-optimal implementations.
+
+The app does not persist tokens correctly on iOS due to strict security policies.
+
+This project prioritizes feature implementation over polish, and is ideal for those wanting to study real-time socket systems, in-app notifications, and basic chat architecture.
 ---
 
 ## 🔥 Tech Stack

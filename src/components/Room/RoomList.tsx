@@ -75,7 +75,7 @@ const RoomList: React.FC<RoomListProps> = ({
       setPasswordLoading(false);
     }
   };
-
+if(!rooms) return;
   return (
     <>
       <div className="w-full flex justify-center mt-4">

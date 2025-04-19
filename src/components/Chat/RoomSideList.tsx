@@ -41,7 +41,7 @@ export default function RoomSideList({ currentRoomId, type }: Props) {
     };
   }, [handleNoti]);
 
-  if (loadingRooms) return;
+  if (loadingRooms || !data) return;
   return (
     <div className="w-full space-y-1">
       {data.rooms.map((room: Room) => {

@@ -147,7 +147,7 @@ const RoomsPage = () => {
         </div>
       </div>
       <div className="h-[570px] md:h-[500px] overflow-y-auto p-4 pr-6 rounded-sm shadow-xl border-solid border-2 border-[#1b4b2688] scrollbar-green">
-        {isLoading ? (
+        {isLoading && !!!data ? (
           <Spin />
         ) : (
           <RoomList
