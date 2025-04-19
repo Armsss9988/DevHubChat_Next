@@ -3,13 +3,14 @@
 import ChatRoom from "@/components/Chat/ChatRoom";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Tabs, Drawer, Grid, Modal, Input, Button, Form } from "antd";
-import { useChatSocket } from "@/hooks/useChatSocket";
+// import { useChatSocket } from "@/hooks/useChatSocket";
 import { useEffect, useMemo, useCallback, useState } from "react";
 import RoomSideList from "@/components/Chat/RoomSideList";
 import UserList from "@/components/Chat/UserList";
 import { MenuFoldOutlined } from "@ant-design/icons";
 import { useCheckExistJoinRoom, useJoinRoom } from "@/hooks/useRoom";
 import { useGlobalToast } from "@/providers/ToastProvider";
+import { getSocket } from "@/services/socket";
 
 export default function ChatPage() {
   const { roomId } = useParams();
@@ -17,11 +18,9 @@ export default function ChatPage() {
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab") || "myRoom";
 
-  const { onlineUsers } = useChatSocket(roomId as string);
   const { useBreakpoint } = Grid;
   const screens = useBreakpoint();
   const isMobile = useMemo(() => !screens.md, [screens]);
-
   const [tabKey, setTabKey] = useState(currentTab);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -29,9 +28,22 @@ export default function ChatPage() {
   const [isCanJoin, setIsCanJoin] = useState(true);
   const [passwordForm] = Form.useForm();
   const [messageApi] = useGlobalToast();
-
   const { mutate: checkRoom } = useCheckExistJoinRoom();
   const { mutate: joinRoom, isPending: isJoining } = useJoinRoom();
+  const [userOnline, setUserOnline] =
+    useState<{ id: string; username: string }[]>();
+
+  const handleRoomUsersUpdated = ({
+    users,
+  }: {
+    users: { id: string; username: string }[];
+  }) => {
+    setUserOnline(users);
+  };
+  useEffect(() => {
+    const socket = getSocket();
+    socket?.on("room_users_updated", handleRoomUsersUpdated);
+  }, []);
 
   const handleChangeTab = useCallback(
     (key: string) => {
@@ -81,35 +93,48 @@ export default function ChatPage() {
     }
   };
 
-  const roomTabs = useMemo(() => (
-    <Tabs
-      activeKey={tabKey}
-      className="custom-tabs"
-      onChange={handleChangeTab}
-      centered
-      items={[
-        {
-          label: "My Room",
-          key: "myRoom",
-          children: <RoomSideList currentRoomId={roomId as string} type="myRoom" />,
-        },
-        {
-          label: "Subscribed",
-          key: "subscribed",
-          children: <RoomSideList currentRoomId={roomId as string} type="subscribed" />,
-        },
-      ]}
-    />
-  ), [tabKey, handleChangeTab, roomId]);
+  const roomTabs = useMemo(
+    () => (
+      <Tabs
+        activeKey={tabKey}
+        className="custom-tabs"
+        onChange={handleChangeTab}
+        centered
+        items={[
+          {
+            label: "My Room",
+            key: "myRoom",
+            children: (
+              <RoomSideList currentRoomId={roomId as string} type="myRoom" />
+            ),
+          },
+          {
+            label: "Subscribed",
+            key: "subscribed",
+            children: (
+              <RoomSideList
+                currentRoomId={roomId as string}
+                type="subscribed"
+              />
+            ),
+          },
+        ]}
+      />
+    ),
+    [tabKey, handleChangeTab, roomId]
+  );
 
-  const sideContent = useMemo(() => (
-    <div className="h-full flex flex-col">
-      {roomTabs}
-      <div className="flex-1 overflow-y-auto px-4">
-        <UserList users={onlineUsers || []} />
+  const sideContent = useMemo(
+    () => (
+      <div className="h-full flex flex-col">
+        {roomTabs}
+        <div className="flex-1 overflow-y-auto px-4">
+          <UserList users={userOnline || []} />
+        </div>
       </div>
-    </div>
-  ), [roomTabs, onlineUsers]);
+    ),
+    [roomTabs, userOnline]
+  );
 
   return (
     <div className="flex flex-1 h-full pt-10 overflow-hidden">
