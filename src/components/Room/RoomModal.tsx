@@ -65,7 +65,6 @@ const RoomModal: React.FC<RoomModalProps> = ({
       className="custom-modal"
     >
       <Form
-        onFinish={handleSubmit}
         form={form}
         layout="vertical"
         className="space-y-2"
