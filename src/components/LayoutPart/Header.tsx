@@ -38,11 +38,10 @@ const Header = () => {
 
   const [hasUnread, setHasUnread] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const { data: notificationGet, refetch } = useNotifications();
+  const { data: notificationGet } = useNotifications();
   const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
   const { mutate: setAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: logout } = useLogout();
-  refetch();
   useEffect(() => {
     if (notificationGet) {
       const notiData: NotificationPayload[] = notificationGet.map(

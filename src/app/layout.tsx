@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ReactQueryProvider from "../providers/ReactQueryProviders";
+import { ReactQueryProvider } from "../providers/ReactQueryProviders";
 import Header from "@/components/LayoutPart/Header";
 import { Suspense } from "react";
 import ReduxProvider from "@/providers/ReduxProvider";
 import { WebsocketProvider } from "../providers/WebsocketProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
+import { NotificationProvider } from "@/providers/NotificationProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -39,14 +40,16 @@ export default async function RootLayout({
       >
         <Suspense fallback={<div>Loading...</div>}>
           <ToastProvider>
-            <ReactQueryProvider>
-              <ReduxProvider>
-                <WebsocketProvider>
-                  <Header />
-                  {children}
-                </WebsocketProvider>
-              </ReduxProvider>
-            </ReactQueryProvider>
+            <NotificationProvider>
+              <ReactQueryProvider>
+                <ReduxProvider>
+                  <WebsocketProvider>
+                    <Header />
+                    {children}
+                  </WebsocketProvider>
+                </ReduxProvider>
+              </ReactQueryProvider>
+            </NotificationProvider>
           </ToastProvider>
         </Suspense>
       </body>

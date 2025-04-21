@@ -1,10 +1,17 @@
 "use client";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { createQueryClient } from "@/services/reactQueryClient";
+import { useNotificationContext } from "@/providers/NotificationProvider";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode, useState } from "react";
+export const ReactQueryProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { notify } = useNotificationContext();
 
-export default function ReactQueryProvider({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const queryClient = useMemo(() => createQueryClient(notify), [notify]);
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-}
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};

@@ -6,9 +6,7 @@ import { useFilterRooms } from "@/hooks/useRoom";
 import { useRouter } from "next/navigation";
 import { getSocket } from "@/services/socket";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  useMarkRoomAsRead,
-} from "@/hooks/useNotification";
+import { useMarkRoomAsRead } from "@/hooks/useNotification";
 type Props = {
   currentRoomId: string | null;
   type: string;
@@ -28,6 +26,7 @@ export default function RoomSideList({ currentRoomId, type }: Props) {
   );
   const handleSelectRoom = async (id: string) => {
     await read(id);
+    queryClient.invalidateQueries({ queryKey: ["rooms"] });
     router.push(`/room/${id}?tab=${type}`);
   };
   const handleNoti = useCallback(() => {
