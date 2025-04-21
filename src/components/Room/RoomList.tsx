@@ -63,9 +63,9 @@ const RoomList: React.FC<RoomListProps> = ({
             setSelectedRoomId(null);
             onClickRoom(selectedRoomId);
           },
-          onError: () => {
-            messageApi.error("Password không đúng rồi");
-          },
+          // onError: () => {
+          //   messageApi.error("Password không đúng rồi");
+          // },
         }
       );
     } catch {

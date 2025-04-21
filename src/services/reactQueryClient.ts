@@ -1,4 +1,4 @@
-import { QueryClient, QueryCache, MutationCache } from "@tanstack/react-query";
+import { QueryClient, QueryCache } from "@tanstack/react-query";
 import { handleApiError } from "./handleApiError";
 
 export const createQueryClient = (
@@ -12,20 +12,16 @@ export const createQueryClient = (
     queryCache: new QueryCache({
       onError: (error, query) => {
         if (query.state.fetchFailureCount === 3) {
-          notify("error", "Error", handleApiError(error));
-        }
-      },
-    }),
-    mutationCache: new MutationCache({
-      // Mutation không có fetchFailureCount, ta dùng context
-      onError: (error, _variables, context, mutation) => {
-        if (mutation.state.failureCount === 3) {
-          notify("error", "Mutation Error", handleApiError(error));
+          notify("error", "Lỗi", handleApiError(error));
         }
       },
     }),
     defaultOptions: {
-      mutations: {},
+      mutations: {
+        onError: (error) => {
+          notify("error", "Lỗi", handleApiError(error));
+        },
+      },
       queries: {
         refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5,
