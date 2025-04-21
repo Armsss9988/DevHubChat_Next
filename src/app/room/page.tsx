@@ -19,7 +19,7 @@ const RoomsPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
-  const [isOwner, setIsOwner] = useState(false);
+  const [owner, setOwner] = useState(false);
   const [isSub, setIsSub] = useState(false);
   const [messageApi] = useGlobalToast();
   const { toastError } = useToastMessage();
@@ -29,8 +29,8 @@ const RoomsPage = () => {
     debouncedSearch,
     currentPage,
     pageSize,
-    isOwner,
-    isSub
+    isSub,
+    owner
   );
   const { mutate: create, isPending: isCreating } = useCreateRoom();
 
@@ -82,14 +82,14 @@ const RoomsPage = () => {
           />
 
           <Button
-            type={isOwner ? "primary" : "default"}
+            type={owner ? "primary" : "default"}
             onClick={() => {
-              setIsOwner(!isOwner);
+              setOwner(!owner);
               setCurrentPage(1);
             }}
-            className={isOwner ? "bg-green-600 text-white border-none" : ""}
+            className={owner ? "bg-green-600 text-white border-none" : ""}
           >
-            {isOwner ? "✓" : ""} Phòng tôi tạo
+            {owner ? "✓" : ""} Phòng tôi tạo
           </Button>
 
           <Button
@@ -147,7 +147,7 @@ const RoomsPage = () => {
         </div>
       </div>
       <div className="h-[570px] md:h-[500px] overflow-y-auto p-4 pr-6 rounded-sm shadow-xl border-solid border-2 border-[#1b4b2688] scrollbar-green">
-        {isLoading && !!!data ? (
+        {isLoading || !!!data ? (
           <Spin />
         ) : (
           <RoomList

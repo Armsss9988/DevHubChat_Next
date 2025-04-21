@@ -33,10 +33,6 @@ export const useFindRoomByCode = () => {
     onSuccess: () => {
       console.log("Ta gọi được nha");
     },
-    onError: (error: unknown) => {
-      console.error("Failed to check room:", error);
-      message.error("Failed to check room. Please try again.");
-    },
   });
 };
 
@@ -45,10 +41,6 @@ export const useCheckExistJoinRoom = () => {
     mutationFn: (roomId: string) => checkExistJoin(roomId),
     onSuccess: () => {
       console.log("Ta gọi được nha");
-    },
-    onError: (error: unknown) => {
-      console.error("Failed to check room:", error);
-      message.error("Failed to check room. Please try again.");
     },
   });
 };
@@ -59,10 +51,6 @@ export const useJoinRoom = () => {
       joinRoom(roomId, password),
     onSuccess: () => {
       console.log("Ta gọi được nha");
-    },
-    onError: (error: unknown) => {
-      console.error("Failed to join room:", error);
-      message.error("Failed to join room. Please try again.");
     },
   });
 };
@@ -85,10 +73,6 @@ export const useCreateRoom = () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       console.log("Ta gọi được nha");
     },
-    onError: (error: unknown) => {
-      console.error("Failed to create room:", error);
-      message.error("Failed to create room. Please try again.");
-    },
   });
 };
 
@@ -109,10 +93,6 @@ export const useUpdateRoom = () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       message.success("Room updated successfully!");
     },
-    onError: (error: unknown) => {
-      console.error("Failed to update room:", error);
-      message.error("Failed to update room. Please try again.");
-    },
   });
 };
 
@@ -124,10 +104,6 @@ export const useDeleteRoom = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       message.success("Room deleted successfully!");
-    },
-    onError: (error: unknown) => {
-      console.error("Failed to delete room:", error);
-      message.error("Failed to delete room. Please try again.");
     },
   });
 };

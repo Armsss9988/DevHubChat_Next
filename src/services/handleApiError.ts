@@ -9,9 +9,9 @@ export function handleApiError(error: unknown): string {
   if (isAxiosErrorWithCustomData(error)) {
     const data = error.response?.data;
 
-    if (data?.statusCode === 401) {
-      return "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.";
-    }
+    // if (data?.statusCode === 401) {
+    //   return "Bạn chưa đăng nhập hoặc phiên đã hết hạn. Vui lòng đăng nhập lại.";
+    // }
 
     if (typeof data?.message === "string") {
       return data.message;

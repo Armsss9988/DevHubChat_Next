@@ -5,13 +5,12 @@ import { Form as AntForm, Input, Typography, Button } from "antd";
 import { useLogin } from "@/hooks/useAuth";
 import { useAppDispatch } from "@/redux/hook";
 import { login } from "@/redux/slices/authSlice";
-import { useToastMessage } from "@/hooks/useToastMessage";
+
 import { useGlobalToast } from "@/providers/ToastProvider";
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const { mutate: loginMutate, isPending } = useLogin();
   const [messageApi] = useGlobalToast();
-  const { toastError } = useToastMessage();
   const handleSubmit = (email: string, password: string) => {
     loginMutate(
       { email, password },
@@ -24,7 +23,6 @@ const LoginForm = () => {
           messageApi.success("Đăng nhập thành công");
           dispatch(login({ user: data }));
         },
-        onError: toastError,
       }
     );
   };

@@ -79,10 +79,8 @@ export default function ChatPage() {
         {
           onSuccess: () => {
             setPasswordModalOpen(false);
+            setIsCanJoin(true);
             passwordForm.resetFields();
-          },
-          onError: () => {
-            messageApi.error("Password không đúng rồi");
           },
         }
       );

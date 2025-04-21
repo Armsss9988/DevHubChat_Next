@@ -28,7 +28,6 @@ const RoomList: React.FC<RoomListProps> = ({
   onClickRoom,
   loadingRoomId,
 }) => {
-  
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [passwordForm] = Form.useForm();
@@ -75,7 +74,7 @@ const RoomList: React.FC<RoomListProps> = ({
       setPasswordLoading(false);
     }
   };
-if(!rooms) return;
+  if (!rooms) return;
   return (
     <>
       <div className="w-full flex justify-center mt-4">
@@ -97,59 +96,61 @@ if(!rooms) return;
         />
       </div>
       <div className="grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-        {rooms?.map((room) => {
-          const isLoading = room.id === loadingRoomId;
+        {rooms &&
+          Array.isArray(rooms) &&
+          rooms?.map((room) => {
+            const isLoading = room.id === loadingRoomId;
 
-          return (
-            <div key={room.id} className="relative">
-              <Card
-                hoverable
-                onClick={() => !isLoading && handleRoomClick(room)}
-                className={twMerge(
-                  "bg-[#F0EBCE] border-[#AA8B56] hover:border-[#4E6C50] text-[#395144] shadow-md border rounded-lg transition duration-200",
-                  isLoading && "pointer-events-none opacity-50"
+            return (
+              <div key={room.id} className="relative">
+                <Card
+                  hoverable
+                  onClick={() => !isLoading && handleRoomClick(room)}
+                  className={twMerge(
+                    "bg-[#F0EBCE] border-[#AA8B56] hover:border-[#4E6C50] text-[#395144] shadow-md border rounded-lg transition duration-200",
+                    isLoading && "pointer-events-none opacity-50"
+                  )}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <Typography.Text strong style={{ color: "#395144" }}>
+                      <span className="flex items-center">
+                        <AutoScrollText text={room.name} />
+                        {room.hasPassword &&
+                          (!room.isJoined ? (
+                            <LockOutlined className="ml-2 text-[#AA8B56]" />
+                          ) : (
+                            <UnlockTwoTone className="ml-2 text-[#066421]" />
+                          ))}
+                      </span>
+                    </Typography.Text>
+                    <Tooltip title="Users Online">
+                      <div className="flex items-center space-x-1 text-[#4E6C50] text-sm">
+                        <UserOutlined />
+                        <span>{room.subCount ?? 0}</span>
+                      </div>
+                    </Tooltip>
+                  </div>
+                  <AutoScrollText text={room.description} />
+                  <div className="flex items-center text-xs text-[#AA8B56] mt-2">
+                    <UserOutlined className="mr-1" />
+                    <span>Created by: {room.creator.username}</span>
+                  </div>
+                  <div className="flex items-center text-xs text-[#AA8B56] mt-1">
+                    <span>Code: {room.roomCode}</span>
+                  </div>
+                  <div className="flex items-center text-xs text-[#AA8B56] mt-1">
+                    {room.isSub ? "Subscribed" : "Unsubscribed"}
+                  </div>
+                </Card>
+
+                {isLoading && (
+                  <div className="absolute inset-0 bg-white/60 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
+                    <Spin />
+                  </div>
                 )}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <Typography.Text strong style={{ color: "#395144" }}>
-                    <span className="flex items-center">
-                      <AutoScrollText text={room.name} />
-                      {room.hasPassword &&
-                        (!room.isJoined ? (
-                          <LockOutlined className="ml-2 text-[#AA8B56]" />
-                        ) : (
-                          <UnlockTwoTone className="ml-2 text-[#066421]" />
-                        ))}
-                    </span>
-                  </Typography.Text>
-                  <Tooltip title="Users Online">
-                    <div className="flex items-center space-x-1 text-[#4E6C50] text-sm">
-                      <UserOutlined />
-                      <span>{room.subCount ?? 0}</span>
-                    </div>
-                  </Tooltip>
-                </div>
-                <AutoScrollText text={room.description} />
-                <div className="flex items-center text-xs text-[#AA8B56] mt-2">
-                  <UserOutlined className="mr-1" />
-                  <span>Created by: {room.creator.username}</span>
-                </div>
-                <div className="flex items-center text-xs text-[#AA8B56] mt-1">
-                  <span>Code: {room.roomCode}</span>
-                </div>
-                <div className="flex items-center text-xs text-[#AA8B56] mt-1">
-                  {room.isSub ? "Subscribed" : "Unsubscribed"}
-                </div>
-              </Card>
-
-              {isLoading && (
-                <div className="absolute inset-0 bg-white/60 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
-                  <Spin />
-                </div>
-              )}
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
       </div>
 
       <Modal
