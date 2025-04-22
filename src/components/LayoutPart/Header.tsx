@@ -11,7 +11,15 @@ import {
   CloseOutlined,
   BellOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  memo,
+  lazy,
+  Suspense,
+  useMemo,
+} from "react";
 import { useLogout } from "@/hooks/useAuth";
 import { useAppSelector } from "@/redux/hook";
 import {
@@ -19,69 +27,132 @@ import {
   resetFavicon,
 } from "@/services/notificationUtils";
 import { getSocket } from "@/services/socket";
-import { Notification, NotificationPayload } from "@/types/notification";
 import {
   useMarkAllNotificationsAsRead,
   useNotifications,
 } from "@/hooks/useNotification";
-import { NotificationList } from "../Notification/NotificationList";
+import { useQueryClient } from "@tanstack/react-query";
+import { Notification } from "@/types/notification";
 
-const Header = () => {
+const NotificationList = lazy(() =>
+  import("../Notification/NotificationList").then((module) => ({
+    default: module.default,
+  }))
+);
+
+// CSS cho hiệu ứng menu mobile
+const menuStyles = `
+  .mobile-menu {
+    transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  .mobile-menu-open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const Header = memo(() => {
   const router = useRouter();
   const user = useAppSelector((state) => state?.auth?.user);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [notificationState, setNotificationState] = useState({
+    visible: false,
+    unreadCount: 0,
+    hasUnread: false,
+  });
   const [loadingLogout, setLoadingLogout] = useState(false);
-  const [loadingLogin, setLoadingLogin] = useState(false);
-  const [loadingSignup, setLoadingSignup] = useState(false);
-  const [notificationVisible, setNotificationVisible] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  const [hasUnread, setHasUnread] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const { data: notificationGet } = useNotifications();
-  const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
+  const { data: notifications } = useNotifications();
   const { mutate: setAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: logout } = useLogout();
-  useEffect(() => {
-    if (notificationGet) {
-      const notiData: NotificationPayload[] = notificationGet.map(
-        (noti: Notification) => ({
-          type: "NEW_MESSAGE",
-          roomId: noti.room.id,
-          roomName: noti.room.name,
-          fromUserId: noti.message.user?.id,
-          fromUsername: noti.message.user?.username,
-          isRead: noti.isRead,
-          message: noti.message.content,
-        })
-      );
-      setNotifications(notiData);
-      if (notificationGet && notificationGet[0] && !notificationGet[0].isRead) {
-        setHasUnread(true);
-        setUnreadCount(1);
-        setFaviconWithNotification();
-      }
-    }
-  }, [notificationGet]);
+  const queryClient = useQueryClient();
 
-  const toggleMenu = () => setIsMobileMenuOpen((prev) => !prev);
+  const unreadCount = useMemo(
+    () => notifications?.filter((n: Notification) => !n.isRead).length || 0,
+    [notifications]
+  );
+
+  const toggleMenu = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    setLoadingLogout(true);
+    try {
+      logout(undefined, {
+        onSuccess: () => router.push("/"),
+        onError: () => setLoadingLogout(false),
+      });
+    } finally {
+      setLoadingLogout(false);
+    }
+  }, [logout, router]);
+
+  // Xử lý đăng nhập
+  const handleLogin = useCallback(() => {
+    router.push("/login");
+  }, [router]);
+
+  // Xử lý đăng ký
+  const handleSignup = useCallback(() => {
+    router.push("/signup");
+  }, [router]);
+
+  // Mở drawer thông báo
+  const toggleNotification = useCallback(() => {
+    setNotificationState((prev) => ({ ...prev, visible: true }));
+  }, []);
+
+  // Đóng drawer thông báo
+  const closeNotification = useCallback(() => {
+    setNotificationState({ visible: false, unreadCount: 0, hasUnread: false });
+    resetFavicon();
+    setAsRead();
+  }, [setAsRead]);
+
+  // Xử lý trạng thái người dùng
   useEffect(() => {
     if (!user) {
-      setUnreadCount(0);
-      setHasUnread(false);
-      setNotificationVisible(false);
+      setNotificationState({
+        visible: false,
+        unreadCount: 0,
+        hasUnread: false,
+      });
+      resetFavicon();
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     }
-  }, [user]);
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket || !user?.id) return;
+  }, [user, queryClient]);
 
-    const handleNewNotification = (notification: NotificationPayload) => {
-      messageApi.info("Bạn có tin nhắn mới!!");
-      setHasUnread(true);
+  // Cập nhật favicon khi có thông báo mới
+  useEffect(() => {
+    if (unreadCount > 0) {
+      setNotificationState((prev) => ({ ...prev, hasUnread: true }));
       setFaviconWithNotification();
-      setNotifications((prev) => [...prev, notification]);
-      setUnreadCount((prev) => prev + 1);
+    } else {
+      setNotificationState((prev) => ({ ...prev, hasUnread: false }));
+      resetFavicon();
+    }
+  }, [unreadCount]);
+
+  // Xử lý thông báo qua socket
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleNewNotification = () => {
+      messageApi.info("Bạn có tin nhắn mới!");
+      setNotificationState((prev) => ({
+        ...prev,
+        unreadCount: prev.unreadCount + 1,
+        hasUnread: true,
+      }));
+      setFaviconWithNotification();
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     };
 
     socket.on("notification", handleNewNotification);
@@ -89,50 +160,12 @@ const Header = () => {
     return () => {
       socket.off("notification", handleNewNotification);
     };
-  }, [user?.id]);
-
-  const handleLogout = async () => {
-    try {
-      setLoadingLogout(true);
-      logout(undefined, {
-        onSuccess: () => {
-          router.push("/");
-        },
-        onError: () => {
-          setLoadingLogout(false);
-        },
-      });
-    } finally {
-      setLoadingLogout(false);
-    }
-  };
-
-  const handleLogin = async () => {
-    setLoadingLogin(true);
-    router.push("/login");
-    setLoadingLogin(false);
-  };
-
-  const handleSignup = async () => {
-    setLoadingSignup(true);
-    router.push("/signup");
-    setLoadingSignup(false);
-  };
-
-  const toggleNotification = () => {
-    setNotificationVisible(true);
-  };
-
-  const closeNotification = () => {
-    setNotificationVisible(false);
-    setUnreadCount(0);
-    setHasUnread(false);
-    resetFavicon();
-    setAsRead();
-  };
+  }, [user, messageApi, queryClient]);
 
   return (
     <>
+      <style>{menuStyles}</style>
+      {contextHolder}
       <div className="bg-[#4E6C50] text-white px-6 py-4 flex items-center justify-between shadow-amber-900 shadow-2xl rounded-b-sm z-10 h-16 relative">
         {/* Logo */}
         <Link
@@ -141,16 +174,16 @@ const Header = () => {
         >
           🌱 DevHub
         </Link>
-        {contextHolder}
+
         {/* Desktop buttons */}
         <div className="hidden md:flex items-center gap-3">
           {user && (
             <Button
               type="text"
-              onClick={() => toggleNotification()}
+              onClick={toggleNotification}
               className="relative"
             >
-              <Badge dot={hasUnread} offset={[-2, 2]}>
+              <Badge dot={notificationState.hasUnread} offset={[-2, 2]}>
                 <BellOutlined style={{ fontSize: 20, color: "white" }} />
               </Badge>
             </Button>
@@ -175,7 +208,6 @@ const Header = () => {
             <>
               <Button
                 icon={<LoginOutlined />}
-                loading={loadingLogin}
                 onClick={handleLogin}
                 className="bg-white text-[#4E6C50] hover:opacity-80 border-none"
               >
@@ -183,7 +215,6 @@ const Header = () => {
               </Button>
               <Button
                 icon={<UserAddOutlined />}
-                loading={loadingSignup}
                 onClick={handleSignup}
                 className="bg-white text-[#4E6C50] hover:opacity-80 border-none"
               >
@@ -200,9 +231,17 @@ const Header = () => {
 
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="absolute top-full right-4 mt-2 bg-[#4E6C50] shadow-md rounded-lg p-4 flex flex-col gap-3 z-50 md:hidden">
+          <div
+            className={`absolute top-full right-4 mt-2 bg-[#4E6C50] shadow-md rounded-lg p-4 flex flex-col gap-3 z-50 md:hidden mobile-menu ${
+              isMobileMenuOpen ? "mobile-menu-open" : ""
+            }`}
+          >
             {user && (
-              <Badge count={unreadCount} size="small" offset={[0, 5]}>
+              <Badge
+                count={notificationState.unreadCount}
+                size="small"
+                offset={[0, 5]}
+              >
                 <Button
                   icon={<BellOutlined />}
                   onClick={() => {
@@ -233,7 +272,6 @@ const Header = () => {
               <>
                 <Button
                   icon={<LoginOutlined />}
-                  loading={loadingLogin}
                   onClick={() => {
                     toggleMenu();
                     handleLogin();
@@ -244,7 +282,6 @@ const Header = () => {
                 </Button>
                 <Button
                   icon={<UserAddOutlined />}
-                  loading={loadingSignup}
                   onClick={() => {
                     toggleMenu();
                     handleSignup();
@@ -257,26 +294,30 @@ const Header = () => {
             )}
           </div>
         )}
-
-        {/* Notification Drawer */}
       </div>
+
+      {/* Notification Drawer */}
       <Drawer
         title="Thông báo"
         placement="right"
         closable={true}
         onClose={closeNotification}
-        open={notificationVisible}
+        open={notificationState.visible}
       >
-        {notifications.length === 0 ? (
-          <p>Không có thông báo nào.</p>
-        ) : (
-          <div className="max-h-[70vh] overflow-y-auto">
-            <NotificationList notifications={notifications} />
-          </div>
-        )}
+        <Suspense fallback={<p>Đang tải thông báo...</p>}>
+          {!notifications || notifications.length === 0 ? (
+            <p>Không có thông báo nào.</p>
+          ) : (
+            <div className="max-h-[70vh] overflow-y-auto">
+              <NotificationList notifications={notifications} />
+            </div>
+          )}
+        </Suspense>
       </Drawer>
     </>
   );
-};
+});
+
+Header.displayName = "Header";
 
 export default Header;

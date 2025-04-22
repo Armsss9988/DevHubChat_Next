@@ -1,13 +1,13 @@
 import { useRouter } from "next/navigation";
 import { List, Typography, Avatar } from "antd";
-import { NotificationPayload } from "@/types/notification";
+import { Notification } from "@/types/notification";
 
 const { Text } = Typography;
 
-export const NotificationList = ({
+const NotificationList = ({
   notifications,
 }: {
-  notifications: NotificationPayload[];
+  notifications: Notification[];
 }) => {
   const router = useRouter();
 
@@ -21,7 +21,7 @@ export const NotificationList = ({
       dataSource={notifications}
       renderItem={(item) => (
         <List.Item
-          onClick={() => handleClick(item.roomId)}
+          onClick={() => handleClick(item.room?.id || "")}
           style={{
             cursor: "pointer",
             padding: "12px 16px",
@@ -34,18 +34,20 @@ export const NotificationList = ({
           <List.Item.Meta
             avatar={
               <Avatar>
-                {item.fromUsername ? item.fromUsername[0].toUpperCase() : ""}
+                {item.message.user?.username
+                  ? item.message.user?.username[0].toUpperCase()
+                  : ""}
               </Avatar>
             }
             title={
               <div className="flex items-center justify-between">
-                <Text strong={!item.isRead}>{item.roomName}</Text>
+                <Text strong={!item.isRead}>{item.room.name}</Text>
               </div>
             }
             description={
               <Text>
-                <Text strong={!item.isRead}>{item.fromUsername}</Text>:{" "}
-                {item.message}
+                <Text strong={!item.isRead}>{item.message.user?.username}</Text>
+                : {item.message.content}
               </Text>
             }
           />
@@ -54,3 +56,4 @@ export const NotificationList = ({
     />
   );
 };
+export default NotificationList;
