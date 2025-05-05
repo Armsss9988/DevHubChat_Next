@@ -71,33 +71,60 @@ const ChatInput = ({ onSend }: Props) => {
   const renderFilePreview = (file: File) => {
     const url = URL.createObjectURL(file);
 
+    // Xử lý file hình ảnh
     if (file.type.startsWith("image/")) {
       return (
-        <img
-          src={url}
-          alt={file.name}
-          className="max-w-full max-h-full object-contain rounded"
-        />
+        <div className="flex flex-col items-center justify-center">
+          <img
+            src={url}
+            alt={file.name}
+            className="max-w-full max-h-full object-fill rounded"
+          />
+          <span className="h-[10px] text-[10px] text-ellipsis flex-nowrap">{file.name}</span>
+        </div>
       );
     }
 
+    // Xử lý file âm thanh
     if (file.type.startsWith("audio/")) {
-      return <audio controls src={url} className="w-full" />;
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <audio controls src={url} className="w-full" />
+          <span className="h-[10px] text-[10px] text-ellipsis flex-nowrap">{file.name}</span>
+        </div>
+      );
     }
 
+    // Xử lý file PDF
     if (file.type === "application/pdf") {
-      return <FilePdfOutlined style={{ fontSize: 32, color: "#e74c3c" }} />;
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <FilePdfOutlined style={{ fontSize: 32, color: "#e74c3c" }} />
+          <span className="h-[10px] text-[10px] text-ellipsis flex-nowrap">{file.name}</span>
+        </div>
+      );
     }
 
+    // Xử lý file Word (docx)
     if (
       file.type === "application/msword" ||
-      file.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
-      return <FileWordOutlined style={{ fontSize: 32, color: "#3498db" }} />;
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <FileWordOutlined style={{ fontSize: 32, color: "#3498db" }} />
+          <span className="h-[10px] text-[10px] text-ellipsis flex-nowrap">{file.name}</span>
+        </div>
+      );
     }
 
-    return <FileUnknownOutlined style={{ fontSize: 32, color: "#7f8c8d" }} />;
+    // File không xác định
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <FileUnknownOutlined style={{ fontSize: 32, color: "#7f8c8d" }} />
+        <span className="h-[10px] text-[10px] text-ellipsis flex-nowrap">{file.name}</span>
+      </div>
+    );
   };
 
   return (
