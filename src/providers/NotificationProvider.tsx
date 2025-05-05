@@ -7,7 +7,7 @@ type NotificationContextType = {
   notify: (
     type: "success" | "error" | "info" | "warning",
     message: string,
-    description: string
+    description?: string
   ) => void;
   requestConfirmation: (
     title: string,
@@ -33,7 +33,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const notify = (
     type: "success" | "error" | "info" | "warning",
     message: string,
-    description: string
+    description?: string
   ) => {
     api[type]({
       placement: "bottomRight",

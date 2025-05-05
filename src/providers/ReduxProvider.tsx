@@ -5,27 +5,30 @@ import { store } from "@/redux/store";
 import { login } from "@/redux/slices/authSlice";
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { Spin } from "antd";
 
 interface ReduxProviderProps {
   children: React.ReactNode;
 }
 
 export default function ReduxProvider({ children }: ReduxProviderProps) {
-  const { data: user, isPending, error } = useCurrentUser();
-  const [dispatched, setDispatched] = useState(false);
+  const { data: user, isPending } = useCurrentUser();
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (!user || dispatched) return;
-
-    try {
+    if (user) {
       store.dispatch(login({ user }));
-      setDispatched(true);
-    } catch (err) {
-      console.error("❌ Invalid token", err);
     }
-  }, [user, dispatched]);
+    setHydrated(true); // luôn gọi setHydrated để boot app
+  }, [user]);
 
-  if (isPending || (!dispatched && !error)) return;
+  if (!hydrated || isPending) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return <Provider store={store}>{children}</Provider>;
 }

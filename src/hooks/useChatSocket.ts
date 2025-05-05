@@ -45,18 +45,15 @@ export const useChatSocket = (roomId: string) => {
       console.warn("❌ Disconnected from socket.");
     };
 
-    // Setup listeners
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("receive_message", handleReceiveMessage);
     socket.on("room_users_updated", handleRoomUsersUpdated);
 
-    // If already connected, join room right away
     if (socket.connected) {
       handleConnect();
     }
 
-    // Cleanup
     return () => {
       socket.emit("leave_room", { roomId });
       socket.off("connect", handleConnect);
@@ -69,10 +66,10 @@ export const useChatSocket = (roomId: string) => {
     };
   }, [roomId]);
 
-  const sendMessage = (message: Message) => {
+  const sendMessage = (message: Message, files?: FileData[]) => {
     const socket = getSocket();
     if (isConnected && socket?.connected) {
-      socket.emit("send_message", message);
+      socket.emit("send_message", { ...message, files });
     } else {
       console.warn("⚠️ Cannot send message: Not connected");
     }

@@ -18,6 +18,7 @@ export const useSubscribeRoom = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isSubscribed"] });
       queryClient.invalidateQueries({ queryKey: ["subscribedRooms"] });
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
   });
 };
@@ -30,6 +31,7 @@ export const useUnsubscribeRoom = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isSubscribed"] });
       queryClient.invalidateQueries({ queryKey: ["subscribedRooms"] });
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
   });
 };

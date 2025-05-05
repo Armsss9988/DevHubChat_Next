@@ -7,6 +7,15 @@ declare global {
     createdAt?: Date;
     room?: Room;
     user?: User;
+    media?: Media[];
+  }
+  interface Media {
+    id: string;
+    messageId: string;
+    url: string;
+    type: string;
+    createdAt: string;
+    message: Message;
   }
 }
 export {};

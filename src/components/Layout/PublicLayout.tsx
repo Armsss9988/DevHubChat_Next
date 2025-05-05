@@ -2,7 +2,6 @@
 
 import { useAppSelector } from "@/redux/hook";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function PublicLayout({
   children,
@@ -11,12 +10,7 @@ export default function PublicLayout({
 }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const router = useRouter();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/room");
-    }
-  }, [isAuthenticated, router]);
-
-  return <>{children}</>;
+  if (isAuthenticated) {
+    router.push("/room");
+  } else return <>{children}</>;
 }

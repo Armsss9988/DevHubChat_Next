@@ -90,22 +90,18 @@ const Header = memo(() => {
     }
   }, [logout, router]);
 
-  // Xử lý đăng nhập
   const handleLogin = useCallback(() => {
     router.push("/login");
   }, [router]);
 
-  // Xử lý đăng ký
   const handleSignup = useCallback(() => {
     router.push("/signup");
   }, [router]);
 
-  // Mở drawer thông báo
   const toggleNotification = useCallback(() => {
     setNotificationState((prev) => ({ ...prev, visible: true }));
   }, []);
 
-  // Đóng drawer thông báo
   const closeNotification = useCallback(() => {
     setNotificationState({ visible: false, unreadCount: 0, hasUnread: false });
     resetFavicon();

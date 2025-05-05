@@ -21,6 +21,7 @@ export const createQueryClient = (
         onError: (error) => {
           notify("error", "Lỗi", handleApiError(error));
         },
+        retry: 0,
       },
       queries: {
         refetchOnWindowFocus: false,

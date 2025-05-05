@@ -124,12 +124,15 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   }, [messages, loadMoreMessages]);
 
   // Gửi tin nhắn
-  const handleSendMessage = (content: string) => {
-    sendMessage({
-      content,
-      userId: you?.id || "haha",
-      roomId,
-    });
+  const handleSendMessage = (content: string, files?: FileData[]) => {
+    sendMessage(
+      {
+        content,
+        userId: you?.id || "haha",
+        roomId,
+      },
+      files
+    );
   };
 
   if (!room) return null;
