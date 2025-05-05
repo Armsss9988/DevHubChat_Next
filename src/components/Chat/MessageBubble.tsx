@@ -12,14 +12,6 @@ type MediaFile = {
   type: string;
   name?: string;
 };
-
-type Message = {
-  content?: string;
-  createdAt: string;
-  user?: { username?: string };
-  media?: MediaFile[];
-};
-
 const MessageBubble = ({
   message,
   isMe,
