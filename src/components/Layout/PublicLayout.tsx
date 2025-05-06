@@ -10,7 +10,8 @@ export default function PublicLayout({
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const router = useRouter();
   if (isAuthenticated) {
-    router.push("/room");
+    const redirect = localStorage.getItem("redirect");
+    router.push(redirect || "/login");
     return null;
   } else return <>{children}</>;
 }

@@ -10,6 +10,7 @@ export default function PrivateLayout({
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const router = useRouter();
   if (!isAuthenticated) {
+    localStorage.setItem("redirect", window.location.pathname);
     router.push("/login");
     return null;
   } else return <>{children}</>;
