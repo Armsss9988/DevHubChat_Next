@@ -12,5 +12,6 @@ export default function PrivateLayout({
   const router = useRouter();
   if (!isAuthenticated) {
     router.push("/login");
+    return null;
   } else return <>{children}</>;
 }

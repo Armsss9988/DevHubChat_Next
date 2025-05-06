@@ -27,7 +27,7 @@ export const useNotificationContext = () => useContext(NotificationContext);
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [api, contextHolder] = notification.useNotification();
+  const [api, contextHolder] = notification.useNotification({top: 70});
 
   const { requestConfirmation, ConfirmationDialog } = useConfirmation();
   const notify = (
@@ -36,7 +36,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     description?: string
   ) => {
     api[type]({
-      placement: "bottomRight",
+      placement: "topRight",
       message,
       description,
     });

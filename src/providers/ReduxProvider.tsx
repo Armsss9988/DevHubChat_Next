@@ -19,7 +19,7 @@ export default function ReduxProvider({ children }: ReduxProviderProps) {
     if (user) {
       store.dispatch(login({ user }));
     }
-    setHydrated(true); // luôn gọi setHydrated để boot app
+    setHydrated(true);
   }, [user]);
 
   if (!hydrated || isPending) {

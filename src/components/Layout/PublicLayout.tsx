@@ -12,5 +12,6 @@ export default function PublicLayout({
   const router = useRouter();
   if (isAuthenticated) {
     router.push("/room");
+    return null;
   } else return <>{children}</>;
 }

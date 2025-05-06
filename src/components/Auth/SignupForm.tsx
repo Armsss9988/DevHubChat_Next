@@ -5,14 +5,12 @@ import { Form as AntForm, Input, Typography, Button } from "antd";
 import { useSignup } from "@/hooks/useAuth";
 import { useAppDispatch } from "@/redux/hook";
 import { login } from "@/redux/slices/authSlice";
-import { useToastMessage } from "@/hooks/useToastMessage";
 import { useGlobalToast } from "@/providers/ToastProvider";
 
 const SignupForm = () => {
   const { mutate: signup, isPending } = useSignup();
   const [messageApi] = useGlobalToast();
   const dispatch = useAppDispatch();
-  const { toastError } = useToastMessage();
 
   const handleSubmit = (email: string, password: string, name: string) => {
     signup(
@@ -22,7 +20,6 @@ const SignupForm = () => {
           messageApi.success("Đăng ký thành công");
           dispatch(login({ user: data.user }));
         },
-        onError: toastError,
       }
     );
   };

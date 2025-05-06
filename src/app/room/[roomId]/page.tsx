@@ -158,7 +158,7 @@ export default function ChatPage() {
         onClose={() => setDrawerOpen(false)}
         open={drawerOpen}
         width={280}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
       >
         {sideContent}
       </Drawer>

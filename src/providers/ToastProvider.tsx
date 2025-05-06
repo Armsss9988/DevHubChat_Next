@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext } from "react";
 import { message } from "antd";
-
+import "@ant-design/v5-patch-for-react-19";
 const ToastContext = createContext<ReturnType<typeof message.useMessage> | null>(null);
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {

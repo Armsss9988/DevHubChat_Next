@@ -8,6 +8,7 @@ import ReduxProvider from "@/providers/ReduxProvider";
 import { WebsocketProvider } from "../providers/WebsocketProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import { NotificationProvider } from "@/providers/NotificationProvider";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,7 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="mdl-js">
       <head>
         <meta
           name="viewport"
