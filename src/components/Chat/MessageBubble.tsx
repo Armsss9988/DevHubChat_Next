@@ -1,10 +1,15 @@
 "use client";
 
 import { format } from "date-fns";
-import Image from "next/image";
-import ReactAudioPlayer from 'react-audio-player'; // Thư viện để xử lý file âm thanh
-import { FilePdfOutlined, FileWordOutlined, FileUnknownOutlined } from "@ant-design/icons";
-import { saveAs } from 'file-saver'; // Thư viện để tải file
+// import Image from "next/image";
+import { Image } from "antd";
+import ReactAudioPlayer from "react-audio-player"; // Thư viện để xử lý file âm thanh
+import {
+  FilePdfOutlined,
+  FileWordOutlined,
+  FileUnknownOutlined,
+} from "@ant-design/icons";
+import { saveAs } from "file-saver"; // Thư viện để tải file
 
 // Các loại file (image, audio, pdf, word, unknown)
 type MediaFile = {
@@ -31,14 +36,14 @@ const MessageBubble = ({
             <Image
               src={file.url}
               alt={file.name || "image"}
-              layout="fill"
-              objectFit="contain"
+              // layout="fill"
+              // objectFit="contain"
               className="bg-black rounded-md border-2 border-solid"
             />
           </div>
           <span
             className="text-[10px] hover:text-blue-500 cursor-pointer"
-            onClick={() => saveAs(file.url, file.name || 'image')}
+            onClick={() => saveAs(file.url, file.name || "image")}
           >
             {file.name || "Không có tên"}
           </span>
@@ -50,14 +55,10 @@ const MessageBubble = ({
     if (file.type.startsWith("audio/")) {
       return (
         <div key={index} className="w-full mt-2">
-          <ReactAudioPlayer
-            src={file.url}
-            controls
-            className="w-full"
-          />
+          <ReactAudioPlayer src={file.url} controls className="w-full" />
           <span
             className="text-blue-500 text-sm underline mt-1 cursor-pointer hover:text-blue-700"
-            onClick={() => saveAs(file.url, file.name || 'audio')}
+            onClick={() => saveAs(file.url, file.name || "audio")}
           >
             {file.name || "Không có tên"}
           </span>
@@ -72,7 +73,7 @@ const MessageBubble = ({
           <FilePdfOutlined style={{ fontSize: 30, color: "#3498db" }} />
           <span
             className="text-[10px] hover:text-blue-500 cursor-pointer"
-            onClick={() => saveAs(file.url, file.name || 'document.pdf')}
+            onClick={() => saveAs(file.url, file.name || "document.pdf")}
           >
             {file.name || "Không có tên"}
           </span>
@@ -83,14 +84,15 @@ const MessageBubble = ({
     // Xử lý file Word (docx)
     if (
       file.type === "application/msword" ||
-      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       return (
         <div key={index} className="flex items-center gap-2 mt-2">
           <FileWordOutlined style={{ fontSize: 30, color: "#3498db" }} />
           <span
             className="text-[10px] hover:text-blue-500 cursor-pointer"
-            onClick={() => saveAs(file.url, file.name || 'document.docx')}
+            onClick={() => saveAs(file.url, file.name || "document.docx")}
           >
             {file.name || "Không có tên"}
           </span>
@@ -112,7 +114,7 @@ const MessageBubble = ({
         </a>
         <button
           className="text-blue-500 text-sm underline ml-2"
-          onClick={() => saveAs(file.url, file.name || 'unknown')}
+          onClick={() => saveAs(file.url, file.name || "unknown")}
         >
           Tải xuống
         </button>
@@ -124,14 +126,19 @@ const MessageBubble = ({
     <div className={`mb-4 flex ${isMe ? "justify-end" : "justify-start"}`}>
       <div
         className={`max-w-xs px-4 py-3 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-300
-        ${isMe
-          ? "bg-[#2c3e50] text-white rounded-br-none"
-          : "bg-[#ecf0f1] text-[#2c3e50] rounded-bl-none"
+        ${
+          isMe
+            ? "bg-[#2c3e50] text-white rounded-br-none"
+            : "bg-[#ecf0f1] text-[#2c3e50] rounded-bl-none"
         }`}
       >
         <div className="mb-1 flex justify-between text-xs font-semibold gap-4">
-          <span className={isMe ? "text-white" : "text-[#5d6d7e]"}>{message.user?.username || "Unknown"}</span>
-          <span className={isMe ? "text-white/70" : "text-[#95a5a6]"}>{time}</span>
+          <span className={isMe ? "text-white" : "text-[#5d6d7e]"}>
+            {message.user?.username || "Unknown"}
+          </span>
+          <span className={isMe ? "text-white/70" : "text-[#95a5a6]"}>
+            {time}
+          </span>
         </div>
 
         {/* Nội dung text */}
