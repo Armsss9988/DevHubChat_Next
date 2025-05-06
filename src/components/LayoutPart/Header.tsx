@@ -64,7 +64,7 @@ const Header = memo(() => {
   });
   const [loadingLogout, setLoadingLogout] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const { data: notifications } = useNotifications();
+  const { data: notifications } = useNotifications(user ? true : false);
   const { mutate: setAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: logout } = useLogout();
   const queryClient = useQueryClient();
@@ -82,13 +82,12 @@ const Header = memo(() => {
     setLoadingLogout(true);
     try {
       logout(undefined, {
-        onSuccess: () => router.push("/"),
         onError: () => setLoadingLogout(false),
       });
     } finally {
       setLoadingLogout(false);
     }
-  }, [logout, router]);
+  }, [logout]);
 
   const handleLogin = useCallback(() => {
     router.push("/login");
@@ -157,7 +156,7 @@ const Header = memo(() => {
       socket.off("notification", handleNewNotification);
     };
   }, [user, messageApi, queryClient]);
-
+  console.log("Header render");
   return (
     <>
       <style>{menuStyles}</style>

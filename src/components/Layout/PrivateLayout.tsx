@@ -1,6 +1,6 @@
 "use client";
 import { useAppSelector } from "@/redux/hook";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default function PrivateLayout({
   children,
@@ -8,10 +8,8 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
-  const router = useRouter();
   if (!isAuthenticated) {
     localStorage.setItem("redirect", window.location.pathname);
-    router.push("/login");
-    return null;
+    redirect("/login");
   } else return <>{children}</>;
 }

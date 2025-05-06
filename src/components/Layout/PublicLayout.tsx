@@ -1,6 +1,8 @@
 "use client";
-import { useAppSelector } from "@/redux/hook";
+
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/hook";
 
 export default function PublicLayout({
   children,
@@ -9,9 +11,18 @@ export default function PublicLayout({
 }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const redirectRoute = localStorage.getItem("redirect");
+      localStorage.removeItem("redirect");
+      router.replace(redirectRoute || "/");
+    }
+  }, [isAuthenticated, router]);
+
   if (isAuthenticated) {
-    const redirect = localStorage.getItem("redirect");
-    router.push(redirect || "/login");
     return null;
-  } else return <>{children}</>;
+  }
+
+  return <>{children}</>;
 }

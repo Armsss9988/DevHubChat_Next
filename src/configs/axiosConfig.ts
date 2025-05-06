@@ -17,7 +17,6 @@ axiosInstance.interceptors.response.use(
           withCredentials: true,
         });
         if (refresh.status === 200 || refresh.status === 201) {
-          // Retry original request
           error.config.headers[
             "Authorization"
           ] = `Bearer ${refresh.data.accessToken}`;

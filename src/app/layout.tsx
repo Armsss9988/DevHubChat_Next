@@ -8,6 +8,7 @@ import ReduxProvider from "@/providers/ReduxProvider";
 import { WebsocketProvider } from "../providers/WebsocketProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import { NotificationProvider } from "@/providers/NotificationProvider";
+import { Spin } from "antd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,14 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full w-full flex-1 flex flex-col overflow-hidden`}
       >
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+          fallback={
+            <Spin
+              size="large"
+              className="flex justify-center items-center h-full w-full"
+            />
+          }
+        >
           <ToastProvider>
             <NotificationProvider>
               <ReactQueryProvider>

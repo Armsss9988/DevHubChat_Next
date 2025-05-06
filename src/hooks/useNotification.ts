@@ -5,11 +5,12 @@ import {
   markRoomAsRead,
 } from "@/services/notification";
 
-export const useNotifications = () => {
+export const useNotifications = (enable: boolean) => {
   return useQuery({
     queryKey: ["notifications"],
     queryFn: () => getMyNotifications(),
     refetchOnWindowFocus: false,
+    enabled: enable,
   });
 };
 export const useMarkRoomAsRead = () => {
