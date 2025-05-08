@@ -9,7 +9,6 @@ import { WebsocketProvider } from "../providers/WebsocketProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import { NotificationProvider } from "@/providers/NotificationProvider";
 import { Spin } from "antd";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -49,16 +48,16 @@ export default async function RootLayout({
           }
         >
           <ToastProvider>
-            <NotificationProvider>
-              <ReactQueryProvider>
+            <ReactQueryProvider>
+              <NotificationProvider>
                 <ReduxProvider>
                   <WebsocketProvider>
                     <Header />
                     {children}
                   </WebsocketProvider>
                 </ReduxProvider>
-              </ReactQueryProvider>
-            </NotificationProvider>
+              </NotificationProvider>
+            </ReactQueryProvider>
           </ToastProvider>
         </Suspense>
       </body>

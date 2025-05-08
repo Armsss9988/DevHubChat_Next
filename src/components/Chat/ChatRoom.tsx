@@ -1,7 +1,7 @@
 "use client";
 
 import { useChatSocket } from "@/hooks/useChatSocket";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, memo, useMemo } from "react";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import { ChevronDown } from "lucide-react";
@@ -14,7 +14,6 @@ import {
   useSubscribeRoom,
   useUnsubscribeRoom,
 } from "@/hooks/useSubscribe";
-
 // CSS cho hiệu ứng tin nhắn mới
 const messageStyles = `
   .message-enter {
@@ -29,10 +28,10 @@ const messageStyles = `
   }
 `;
 
-const ChatRoom = ({ roomId }: { roomId: string }) => {
+const ChatRoom = memo(({ roomId }: { roomId: string }) => {
   const { messages, sendMessage, loadMoreMessages, hasMore } =
     useChatSocket(roomId);
-  const { data: room } = useGetRoomById(roomId);
+  const { data: room, error } = useGetRoomById(roomId);
   const you = useAppSelector((state) => state.auth.user);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -46,13 +45,13 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   const { mutateAsync: unsubscribe } = useUnsubscribeRoom();
 
   // Xử lý đăng ký/hủy đăng ký phòng
-  const handleToggleSub = async () => {
+  const handleToggleSub = useCallback(async () => {
     if (checkSub) {
       await unsubscribe(roomId);
     } else {
       await subscribe(roomId);
     }
-  };
+  }, [checkSub, roomId, subscribe, unsubscribe]);
 
   // Cuộn xuống cuối với hiệu ứng mượt
   const scrollToBottom = useCallback(() => {
@@ -124,28 +123,55 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
   }, [messages, loadMoreMessages]);
 
   // Gửi tin nhắn
-  const handleSendMessage = (content: string, files?: FileData[]) => {
-    sendMessage(
-      {
-        content,
-        userId: you?.id || "haha",
-        roomId,
-      },
-      files
+  const handleSendMessage = useCallback(
+    (content: string, files?: FileData[]) => {
+      sendMessage(
+        {
+          content,
+          userId: you?.id || "haha",
+          roomId,
+        },
+        files
+      );
+    },
+    [sendMessage, you?.id, roomId]
+  );
+  const Head = useMemo(() => {
+    return (
+      <ChatHeader
+        roomName={room?.name || ""}
+        description={room?.description || ""}
+      />
     );
-  };
-
-  if (!room) return null;
+  }, [room?.name, room?.description]);
+  const MessageMemo = useCallback(
+    (msg: Message) => {
+      return (
+        <MessageBubble
+          key={msg.id}
+          message={msg}
+          isMe={msg.user?.id === you?.id}
+        />
+      );
+    },
+    [you?.id]
+  );
+  const InputMemo = useMemo(() => {
+    return <ChatInput onSend={handleSendMessage} />;
+  }, [handleSendMessage]);
+  if (!room || error)
+    return (
+      <div className="flex w-full h-full justify-center align-middle items-center">
+        <div>Room đã xóa hoặc không có</div>
+      </div>
+    );
 
   return (
     <div className="flex flex-col h-full flex-1 rounded-t-2xl overflow-hidden">
       <style>{messageStyles}</style>
       <div className="flex items-center justify-between p-3 border-b bg-gradient-to-br from-[#0e831d] to-[#576752] shadow-[10px_10px_5px_rgba(0,0,0,0.3)] z-10 gap-3">
         <div className="flex items-center flex-row justify-between w-full">
-          <ChatHeader
-            roomName={room?.name || ""}
-            description={room?.description || ""}
-          />
+          {Head}
           <div className="hidden md:flex flex-row gap-3 items-center">
             <span className="bg-gradient-to-r from-[#f7e6d3] to-[#d2a679] text-[#4b2e13] font-semibold px-3 py-1 rounded-md shadow-sm shadow-[#b3875a] hover:shadow-md hover:shadow-[#8c5f3b] hover:brightness-105 transition duration-300">
               {room?.roomCode}
@@ -194,18 +220,14 @@ const ChatRoom = ({ roomId }: { roomId: string }) => {
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto px-4 py-2 bg-[#b3cbb3]"
       >
-        {messages.map((msg) => (
-          <MessageBubble
-            key={msg.id}
-            message={msg}
-            isMe={msg.user?.id === you?.id}
-          />
-        ))}
+        {messages.map((msg) => MessageMemo(msg))}
         <div ref={scrollAnchorRef} />
       </div>
-      <ChatInput onSend={handleSendMessage} />
+      {InputMemo}
     </div>
   );
-};
+});
+
+ChatRoom.displayName = "ChatRoom";
 
 export default ChatRoom;

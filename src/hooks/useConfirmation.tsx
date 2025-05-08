@@ -7,6 +7,7 @@ export interface ConfirmationOptions {
   message: string;
   type?: "info" | "warning" | "error" | "success";
   onConfirm: () => Promise<void> | void;
+  loading?: boolean;
 }
 
 const useConfirmation = () => {
@@ -17,9 +18,10 @@ const useConfirmation = () => {
     title: string,
     message: string,
     type: ConfirmationOptions["type"] = "info",
-    onConfirm: () => Promise<void> | void
+    onConfirm: () => Promise<void> | void,
+    loading?: boolean
   ) => {
-    setOptions({ title, message, type, onConfirm });
+    setOptions({ title, message, type, onConfirm, loading });
     setIsVisible(true);
   };
 
@@ -27,11 +29,9 @@ const useConfirmation = () => {
     if (options?.onConfirm) {
       await options.onConfirm();
     }
-    setIsVisible(false);
   };
 
   const handleCancel = () => setIsVisible(false);
-
   const ConfirmationDialog = () =>
     options && (
       <ConfirmationModal
@@ -40,11 +40,12 @@ const useConfirmation = () => {
         message={options.message}
         type={options.type}
         onConfirm={handleConfirm}
+        loading={options.loading}
         onCancel={handleCancel}
       />
     );
 
-  return { requestConfirmation, ConfirmationDialog };
+  return { requestConfirmation, ConfirmationDialog, handleCancel };
 };
 
 export default useConfirmation;

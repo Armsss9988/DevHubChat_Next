@@ -13,13 +13,16 @@ type NotificationContextType = {
     title: string,
     message: string,
     type: ConfirmationOptions["type"],
-    onConfirm: () => Promise<void> | void
+    onConfirm: () => Promise<void> | void,
+    loading?: boolean
   ) => void;
+  handleCancel: () => void;
 };
 
 const NotificationContext = createContext<NotificationContextType>({
   notify: () => {},
   requestConfirmation: () => {},
+  handleCancel: () => {},
 });
 
 export const useNotificationContext = () => useContext(NotificationContext);
@@ -27,9 +30,10 @@ export const useNotificationContext = () => useContext(NotificationContext);
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [api, contextHolder] = notification.useNotification({top: 70});
+  const [api, contextHolder] = notification.useNotification({ top: 70 });
 
-  const { requestConfirmation, ConfirmationDialog } = useConfirmation();
+  const { requestConfirmation, ConfirmationDialog, handleCancel } =
+    useConfirmation();
   const notify = (
     type: "success" | "error" | "info" | "warning",
     message: string,
@@ -43,7 +47,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <NotificationContext.Provider value={{ notify, requestConfirmation }}>
+    <NotificationContext.Provider
+      value={{ notify, requestConfirmation, handleCancel }}
+    >
       {contextHolder}
       <ConfirmationDialog />
       {children}

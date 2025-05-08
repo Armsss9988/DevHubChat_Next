@@ -9,13 +9,28 @@ import {
   Button,
   Form,
 } from "antd";
-import { UserOutlined, LockOutlined, UnlockTwoTone } from "@ant-design/icons";
+import {
+  UserOutlined,
+  LockOutlined,
+  UnlockTwoTone,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
-import { useFindRoomByCode, useJoinRoom } from "@/hooks/useRoom";
+import {
+  useDeleteRoom,
+  useFindRoomByCode,
+  useJoinRoom,
+  useUpdateRoom,
+} from "@/hooks/useRoom";
 import { AutoScrollText } from "../UI/AutoScrollText";
 import { useGlobalToast } from "../../providers/ToastProvider";
 import { useToastMessage } from "@/hooks/useToastMessage";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useNotificationContext } from "@/providers/NotificationProvider";
+import RoomModal from "./RoomModal";
 
 interface RoomListProps {
   rooms: Room[];
@@ -28,6 +43,8 @@ const RoomList: React.FC<RoomListProps> = ({
   onClickRoom,
   loadingRoomId,
 }) => {
+  const [open, setOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [passwordForm] = Form.useForm();
@@ -36,6 +53,10 @@ const RoomList: React.FC<RoomListProps> = ({
   const { toastError } = useToastMessage();
   const { mutate: joinRoom, isPending: isJoinning } = useJoinRoom();
   const { mutate: findByCode, isPending: isFinding } = useFindRoomByCode();
+  const { mutate: deleteRoom, isPending: deleting } = useDeleteRoom();
+  const { mutate: updateRoom, isPending: updating } = useUpdateRoom();
+  const { requestConfirmation, handleCancel } = useNotificationContext();
+  const userId = useSelector((state: RootState) => state?.auth?.user?.id);
   const handleRoomClick = (room: Room) => {
     if (!room.hasPassword || room.isJoined) {
       messageApi.success("Bạn đã đăng nhập vào room");
@@ -100,7 +121,6 @@ const RoomList: React.FC<RoomListProps> = ({
           Array.isArray(rooms) &&
           rooms?.map((room) => {
             const isLoading = room.id === loadingRoomId;
-
             return (
               <div key={room.id} className="relative">
                 <Card
@@ -115,6 +135,7 @@ const RoomList: React.FC<RoomListProps> = ({
                     <Typography.Text strong style={{ color: "#395144" }}>
                       <span className="flex items-center">
                         <AutoScrollText text={room.name} />
+
                         {room.hasPassword &&
                           (!room.isJoined ? (
                             <LockOutlined className="ml-2 text-[#AA8B56]" />
@@ -123,13 +144,46 @@ const RoomList: React.FC<RoomListProps> = ({
                           ))}
                       </span>
                     </Typography.Text>
-                    <Tooltip title="Users Online">
-                      <div className="flex items-center space-x-1 text-[#4E6C50] text-sm">
-                        <UserOutlined />
-                        <span>{room.subCount ?? 0}</span>
-                      </div>
-                    </Tooltip>
+                    <div className="flex items-center gap-3">
+                      {room.creator.id === userId && (
+                        <div className="flex justify-end">
+                          <EditOutlined
+                            onClick={(e) => {
+                              e.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên Card
+                              setSelectedRoom(room);
+                              setOpen(true);
+                            }}
+                          />
+                          <DeleteOutlined
+                            className="ml-2 !text-red-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              requestConfirmation(
+                                "Xóa phòng",
+                                "Bạn có chắc chắn muốn xóa phòng này không?",
+                                "warning",
+                                () => {
+                                  deleteRoom(room.id, {
+                                    onSuccess: () => {
+                                      handleCancel();
+                                    },
+                                  });
+                                },
+                                deleting
+                              );
+                            }}
+                          />
+                        </div>
+                      )}
+                      <Tooltip title="Users Online">
+                        <div className="flex items-center space-x-1 text-[#4E6C50] text-sm">
+                          <UserOutlined />
+                          <span>{room.subCount ?? 0}</span>
+                        </div>
+                      </Tooltip>{" "}
+                    </div>
                   </div>
+
                   <AutoScrollText text={room.description} />
                   <div className="flex items-center text-xs text-[#AA8B56] mt-2">
                     <UserOutlined className="mr-1" />
@@ -195,6 +249,15 @@ const RoomList: React.FC<RoomListProps> = ({
           </div>
         </Form>
       </Modal>
+      <RoomModal
+        open={open}
+        onCancel={() => setOpen(false)}
+        onSubmit={(data) => {
+          updateRoom(data as Room, { onSuccess: () => setOpen(false) });
+        }}
+        loading={updating}
+        room={selectedRoom}
+      />
     </>
   );
 };

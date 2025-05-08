@@ -32,12 +32,10 @@ const MessageBubble = ({
     if (file.type.startsWith("image/")) {
       return (
         <div className="flex flex-col items-center gap-2 mt-2" key={index}>
-          <div className="relative w-30 h-30">
+          <div className="">
             <Image
               src={file.url}
               alt={file.name || "image"}
-              // layout="fill"
-              // objectFit="contain"
               className="bg-black rounded-md border-2 border-solid"
             />
           </div>

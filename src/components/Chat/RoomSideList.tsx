@@ -1,13 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { cn } from "@/services/utils";
 import { Skeleton, Spin, Tooltip } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import { Lock, Unlock, MessageCircle } from "lucide-react";
-import { useFilterRooms } from "@/hooks/useRoom";
+import { useDeleteRoom, useFilterRooms, useUpdateRoom } from "@/hooks/useRoom";
 import { useRouter } from "next/navigation";
 import { getSocket } from "@/services/socket";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMarkRoomAsRead } from "@/hooks/useNotification";
+import { useNotificationContext } from "@/providers/NotificationProvider";
+import RoomModal from "../Room/RoomModal";
 type Props = {
   currentRoomId: string | null;
   type: string;
@@ -15,11 +21,20 @@ type Props = {
 
 export default function RoomSideList({ currentRoomId, type }: Props) {
   const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutateAsync: read } = useMarkRoomAsRead();
+  const { mutate: deleteRoom, isPending: deleting } = useDeleteRoom();
+  const { mutate: updateRoom, isPending: updating } = useUpdateRoom();
+  const { requestConfirmation, handleCancel } = useNotificationContext();
   const [loadingRoomId, setLoadingRoomId] = useState<string | null>(null);
-  const { data: data, isLoading: loadingRooms } = useFilterRooms(
+  const {
+    data: data,
+    isLoading: loadingRooms,
+    refetch,
+  } = useFilterRooms(
     "",
     page,
     10,
@@ -64,15 +79,17 @@ export default function RoomSideList({ currentRoomId, type }: Props) {
           }
 
           return (
-            <button
+            <div
               key={room.id}
-              onClick={() => handleSelectRoom(room.id)}
               className={cn(
-                "w-full flex items-center justify-between px-4 py-2 rounded-lg transition hover:bg-gray-100",
-                isActive ? "bg-gray-200 font-semibold" : ""
+                "w-full flex items-center justify-between px-4 py-2 rounded-lg transition hover:bg-gray-100 hover:cursor-pointer",
+                isActive && "bg-gray-200 font-semibold"
               )}
             >
-              <div className="flex items-center space-x-2">
+              <div
+                className="flex items-center space-x-2"
+                onClick={() => handleSelectRoom(room.id)}
+              >
                 {loadingRoomId === room.id ? (
                   <Spin
                     indicator={
@@ -97,7 +114,37 @@ export default function RoomSideList({ currentRoomId, type }: Props) {
                   </span>
                 </div>
               )}
-            </button>
+              {type === "myRoom" && (
+                <div className="flex justify-end ">
+                  <EditOutlined
+                    onClick={() => {
+                      setSelectedRoom(room);
+                      setOpen(true);
+                    }}
+                  />
+
+                  <DeleteOutlined
+                    className="ml-2 !text-red-800"
+                    onClick={() =>
+                      requestConfirmation(
+                        "Xóa phòng",
+                        "Bạn có chắc chắn muốn xóa phòng này không?",
+                        "warning",
+                        () => {
+                          deleteRoom(room.id, {
+                            onSuccess: () => {
+                              refetch();
+                              handleCancel();
+                            },
+                          });
+                        },
+                        deleting
+                      )
+                    }
+                  />
+                </div>
+              )}
+            </div>
           );
         })}
       {/* Pagination control */}
@@ -122,6 +169,15 @@ export default function RoomSideList({ currentRoomId, type }: Props) {
           </button>
         </div>
       )}
+      <RoomModal
+        open={open}
+        onCancel={() => setOpen(false)}
+        onSubmit={(data) =>
+          updateRoom(data as Room, { onSuccess: () => setOpen(false) })
+        }
+        loading={updating}
+        room={selectedRoom}
+      />
     </div>
   );
 }

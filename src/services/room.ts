@@ -43,7 +43,7 @@ export const updateRoom = async (
   name: string,
   description: string
 ) => {
-  const response = await axiosInstance.put(`/rooms/${id}`, {
+  const response = await axiosInstance.patch(`/rooms/${id}`, {
     name,
     description,
   });

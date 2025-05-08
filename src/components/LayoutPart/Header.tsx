@@ -57,11 +57,9 @@ const Header = memo(() => {
   const router = useRouter();
   const user = useAppSelector((state) => state?.auth?.user);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [notificationState, setNotificationState] = useState({
-    visible: false,
-    unreadCount: 0,
-    hasUnread: false,
-  });
+  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [hasUnread, setHasUnread] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { data: notifications } = useNotifications(user ? true : false);
@@ -69,10 +67,15 @@ const Header = memo(() => {
   const { mutate: logout } = useLogout();
   const queryClient = useQueryClient();
 
-  const unreadCount = useMemo(
+  const unreadCountMemo = useMemo(
     () => notifications?.filter((n: Notification) => !n.isRead).length || 0,
     [notifications]
   );
+
+  useEffect(() => {
+    setUnreadCount(unreadCountMemo);
+    setHasUnread(unreadCountMemo > 0);
+  }, [unreadCountMemo]);
 
   const toggleMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => !prev);
@@ -98,11 +101,13 @@ const Header = memo(() => {
   }, [router]);
 
   const toggleNotification = useCallback(() => {
-    setNotificationState((prev) => ({ ...prev, visible: true }));
+    setIsNotificationVisible(true);
   }, []);
 
   const closeNotification = useCallback(() => {
-    setNotificationState({ visible: false, unreadCount: 0, hasUnread: false });
+    setIsNotificationVisible(false);
+    setUnreadCount(0);
+    setHasUnread(false);
     resetFavicon();
     setAsRead();
   }, [setAsRead]);
@@ -110,11 +115,9 @@ const Header = memo(() => {
   // Xử lý trạng thái người dùng
   useEffect(() => {
     if (!user) {
-      setNotificationState({
-        visible: false,
-        unreadCount: 0,
-        hasUnread: false,
-      });
+      setIsNotificationVisible(false);
+      setUnreadCount(0);
+      setHasUnread(false);
       resetFavicon();
     } else {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
@@ -124,10 +127,10 @@ const Header = memo(() => {
   // Cập nhật favicon khi có thông báo mới
   useEffect(() => {
     if (unreadCount > 0) {
-      setNotificationState((prev) => ({ ...prev, hasUnread: true }));
+      setHasUnread(true);
       setFaviconWithNotification();
     } else {
-      setNotificationState((prev) => ({ ...prev, hasUnread: false }));
+      setHasUnread(false);
       resetFavicon();
     }
   }, [unreadCount]);
@@ -141,11 +144,8 @@ const Header = memo(() => {
 
     const handleNewNotification = () => {
       messageApi.info("Bạn có tin nhắn mới!");
-      setNotificationState((prev) => ({
-        ...prev,
-        unreadCount: prev.unreadCount + 1,
-        hasUnread: true,
-      }));
+      setUnreadCount((prev) => prev + 1);
+      setHasUnread(true);
       setFaviconWithNotification();
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     };
@@ -178,7 +178,7 @@ const Header = memo(() => {
               onClick={toggleNotification}
               className="relative"
             >
-              <Badge dot={notificationState.hasUnread} offset={[-2, 2]}>
+              <Badge dot={hasUnread} offset={[-2, 2]}>
                 <BellOutlined style={{ fontSize: 20, color: "white" }} />
               </Badge>
             </Button>
@@ -233,7 +233,7 @@ const Header = memo(() => {
           >
             {user && (
               <Badge
-                count={notificationState.unreadCount}
+                count={unreadCount}
                 size="small"
                 offset={[0, 5]}
               >
@@ -297,7 +297,7 @@ const Header = memo(() => {
         placement="right"
         closable={true}
         onClose={closeNotification}
-        open={notificationState.visible}
+        open={isNotificationVisible}
       >
         <Suspense fallback={<p>Đang tải thông báo...</p>}>
           {!notifications || notifications.length === 0 ? (

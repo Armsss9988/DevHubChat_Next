@@ -12,6 +12,7 @@ interface ConfirmationModalProps {
   title: string;
   message: string;
   onConfirm: () => void;
+  loading?: boolean;
   onCancel: () => void;
   type?: "info" | "warning" | "error" | "success";
 }
@@ -22,6 +23,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   message,
   onConfirm,
   onCancel,
+  loading,
   type = "info",
 }) => {
   const typeIcons = {
@@ -55,7 +57,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <p className="text-gray-600">{message}</p>
       <div className="flex justify-end gap-3 mt-6">
         <Button onClick={onCancel}>Cancel</Button>
-        <Button htmlType="submit" onClick={onConfirm}>
+        <Button
+          htmlType="submit"
+          onClick={onConfirm}
+          loading={loading || false}
+        >
           Confirm
         </Button>
       </div>

@@ -1,25 +1,19 @@
 import { QueryClient, QueryCache } from "@tanstack/react-query";
 import { handleApiError } from "./handleApiError";
-
-export const createQueryClient = (
-  notify: (
-    type: "error" | "success" | "info" | "warning",
-    message: string,
-    description: string
-  ) => void
-) => {
+import { message } from "antd";
+export const createQueryClient = () => {
   return new QueryClient({
     queryCache: new QueryCache({
       onError: (error, query) => {
         if (query.state.fetchFailureCount === 3) {
-          notify("error", "Lỗi", handleApiError(error));
+          message.error(handleApiError(error));
         }
       },
     }),
     defaultOptions: {
       mutations: {
         onError: (error) => {
-          notify("error", "Lỗi", handleApiError(error));
+          message.error(handleApiError(error));
         },
         retry: 0,
       },

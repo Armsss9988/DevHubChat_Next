@@ -60,7 +60,9 @@ export const useGetRoomById = (roomId: string) => {
     queryKey: ["room", roomId],
     queryFn: () => getRoomById(roomId),
     enabled: !!roomId,
+    staleTime: 0,
     refetchOnWindowFocus: false,
+    retry: 0,
   });
 };
 
@@ -98,11 +100,13 @@ export const useUpdateRoom = () => {
 
 export const useDeleteRoom = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (id: string) => await deleteRoom(id),
-    onSuccess: () => {
+    onSuccess: (data: Room, id: string) => {
+      console.log("Xoá thành công Room có ID:", id);
+      const roomId = id;
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
+      queryClient.invalidateQueries({ queryKey: ["room", roomId] });
       message.success("Room deleted successfully!");
     },
   });

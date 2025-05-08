@@ -6,13 +6,14 @@ import { useSignup } from "@/hooks/useAuth";
 import { useAppDispatch } from "@/redux/hook";
 import { login } from "@/redux/slices/authSlice";
 import { useGlobalToast } from "@/providers/ToastProvider";
+import { memo, useCallback } from "react";
 
-const SignupForm = () => {
+const SignupForm = memo(() => {
   const { mutate: signup, isPending } = useSignup();
   const [messageApi] = useGlobalToast();
   const dispatch = useAppDispatch();
 
-  const handleSubmit = (email: string, password: string, name: string) => {
+  const handleSubmit = useCallback((email: string, password: string, name: string) => {
     signup(
       { email, password, name },
       {
@@ -22,95 +23,89 @@ const SignupForm = () => {
         },
       }
     );
-  };
+  }, [signup, messageApi, dispatch]);
 
   return (
-    <div>
-      <Formik
-        initialValues={{ email: "", password: "", name: "" }}
-        validationSchema={Yup.object({
-          email: Yup.string()
-            .email("Email không hợp lệ")
-            .required("Bắt buộc nhập email"),
-          password: Yup.string()
-            .min(6, "Mật khẩu tối thiểu 6 ký tự")
-            .required("Bắt buộc nhập mật khẩu"),
-          name: Yup.string().required("Bắt buộc nhập tên hiển thị"),
-        })}
-        onSubmit={({ email, password, name }) =>
-          handleSubmit(email, password, name)
-        }
-      >
-        {({
-          handleSubmit,
-          handleChange,
-          handleBlur,
-          values,
-          errors,
-          touched,
-        }) => (
-          <AntForm
-            layout="vertical"
-            onFinish={handleSubmit}
-            className="space-y-6 w-[300px] md:w-[400px]"
+    <Formik
+      initialValues={{ email: "", password: "", name: "" }}
+      validationSchema={Yup.object({
+        email: Yup.string()
+          .email("Email không hợp lệ")
+          .required("Email là bắt buộc"),
+        password: Yup.string()
+          .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+          .required("Mật khẩu là bắt buộc"),
+        name: Yup.string()
+          .min(2, "Tên phải có ít nhất 2 ký tự")
+          .required("Tên là bắt buộc"),
+      })}
+      onSubmit={(values) => handleSubmit(values.email, values.password, values.name)}
+    >
+      {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
+        <AntForm
+          name="signup"
+          onFinish={handleSubmit}
+          className="w-full max-w-md mx-auto"
+        >
+          <Typography.Title level={2} className="text-center mb-8">
+            Đăng ký
+          </Typography.Title>
+
+          <AntForm.Item
+            validateStatus={touched.name && errors.name ? "error" : ""}
+            help={touched.name && errors.name}
           >
-            <AntForm.Item
-              label={<Typography.Text strong>User Name</Typography.Text>}
-              validateStatus={touched.name && errors.name ? "error" : ""}
-              help={touched.name && errors.name}
-            >
-              <Input
-                name="name"
-                placeholder="Enter your name"
-                value={values.name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </AntForm.Item>
+            <Input
+              name="name"
+              placeholder="Tên"
+              value={values.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+          </AntForm.Item>
 
-            <AntForm.Item
-              label={<Typography.Text strong>Email</Typography.Text>}
-              validateStatus={touched.email && errors.email ? "error" : ""}
-              help={touched.email && errors.email}
-            >
-              <Input
-                name="email"
-                placeholder="Enter your email"
-                value={values.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </AntForm.Item>
+          <AntForm.Item
+            validateStatus={touched.email && errors.email ? "error" : ""}
+            help={touched.email && errors.email}
+          >
+            <Input
+              name="email"
+              placeholder="Email"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+          </AntForm.Item>
 
-            <AntForm.Item
-              label={<Typography.Text strong>Password</Typography.Text>}
-              validateStatus={
-                touched.password && errors.password ? "error" : ""
-              }
-              help={touched.password && errors.password}
-            >
-              <Input.Password
-                name="password"
-                placeholder="Enter your password"
-                value={values.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </AntForm.Item>
+          <AntForm.Item
+            validateStatus={touched.password && errors.password ? "error" : ""}
+            help={touched.password && errors.password}
+          >
+            <Input.Password
+              name="password"
+              placeholder="Mật khẩu"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+          </AntForm.Item>
 
+          <AntForm.Item>
             <Button
               type="primary"
               htmlType="submit"
-              className="w-full"
               loading={isPending}
+              className="w-full"
             >
-              Signup
+              Đăng ký
             </Button>
-          </AntForm>
-        )}
-      </Formik>
-    </div>
+          </AntForm.Item>
+        </AntForm>
+      )}
+    </Formik>
   );
-};
+});
+
+SignupForm.displayName = "SignupForm";
 
 export default SignupForm;

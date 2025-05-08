@@ -1,8 +1,7 @@
 "use client";
+
 import { useAppSelector } from "@/redux/hook";
 import { Modal, Input, Button, Form } from "antd";
-import { useEffect } from "react";
-
 export interface RoomData {
   id?: string;
   name: string;
@@ -16,7 +15,7 @@ interface RoomModalProps {
   onCancel: () => void;
   onSubmit: (data: RoomData) => void;
   loading: boolean;
-  room?: RoomData;
+  room?: RoomData | null;
 }
 
 const RoomModal: React.FC<RoomModalProps> = ({
@@ -28,26 +27,21 @@ const RoomModal: React.FC<RoomModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const user = useAppSelector((state) => state.auth.user);
-  useEffect(() => {
-    if (room) {
-      form.setFieldsValue({
-        name: room.name,
-        description: room.description,
-        password: room.password,
-        creatorId: room.creatorId,
-      });
-    }
-  }, [room, form]);
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
-      onSubmit({
-        id: room?.id,
+      const payload: RoomData = {
         name: values.name,
         description: values.description,
-        password: values.password,
+        password: values.password || undefined,
         creatorId: user?.id || "",
-      });
+      };
+
+      if (room?.id) {
+        payload.id = room.id;
+      }
+
+      onSubmit(payload);
     });
   };
 
@@ -55,7 +49,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
     <Modal
       open={open}
       title={
-        <span className="text-[#395144]">
+        <span className="text-[#395144] font-semibold">
           {room ? "Update Room" : "Create New Room"}
         </span>
       }
@@ -63,42 +57,49 @@ const RoomModal: React.FC<RoomModalProps> = ({
       footer={null}
       centered
       className="custom-modal"
+      destroyOnClose
     >
       <Form
         form={form}
         layout="vertical"
-        className="space-y-2"
         initialValues={{
-          name: "",
-          description: "",
-          roomCode: "",
-          password: "",
+          name: room?.name || "",
+          description: room?.description || "",
+          password: room?.password || "",
         }}
       >
         <Form.Item
-          label={<span className="text-[#4E6C50]">Room Name</span>}
+          label={<span className="text-[#4E6C50] font-medium">Room Name</span>}
           name="name"
           rules={[{ required: true, message: "Please enter room name" }]}
         >
           <Input placeholder="Enter room name" />
         </Form.Item>
+
         <Form.Item
-          label={<span className="text-[#4E6C50]">Description</span>}
+          label={
+            <span className="text-[#4E6C50] font-medium">Description</span>
+          }
           name="description"
         >
           <Input.TextArea placeholder="Enter room description" rows={3} />
         </Form.Item>
+
         <Form.Item
-          label={<span className="text-[#4E6C50]">Password (optional)</span>}
+          label={
+            <span className="text-[#4E6C50] font-medium">
+              Password (optional)
+            </span>
+          }
           name="password"
         >
           <Input.Password placeholder="Enter room password" />
         </Form.Item>
-        <div className="flex justify-end space-x-2">
+
+        <div className="flex justify-end space-x-2 mt-4">
           <Button onClick={onCancel}>Cancel</Button>
           <Button
             type="primary"
-            htmlType="submit"
             onClick={handleSubmit}
             loading={loading}
             className="bg-[#395144] hover:bg-[#4E6C50] border-none text-white"
