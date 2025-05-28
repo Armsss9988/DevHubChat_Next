@@ -161,7 +161,7 @@ const Header = memo(() => {
     <>
       <style>{menuStyles}</style>
       {contextHolder}
-      <div className="bg-[#4E6C50] text-white px-6 py-4 flex items-center justify-between shadow-amber-900 shadow-2xl rounded-b-sm z-10 h-16 relative">
+      <div className="bg-[#4E6C50] text-white px-6 py-4 flex items-center justify-between shadow-amber-900 shadow-2xl z-10 h-16 relative">
         {/* Logo */}
         <Link
           href="/"
@@ -232,11 +232,7 @@ const Header = memo(() => {
             }`}
           >
             {user && (
-              <Badge
-                count={unreadCount}
-                size="small"
-                offset={[0, 5]}
-              >
+              <Badge count={unreadCount} size="small" offset={[0, 5]}>
                 <Button
                   icon={<BellOutlined />}
                   onClick={() => {
